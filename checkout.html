@@ -1,0 +1,1929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | OVRIN</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/checkout.css">
+    <link rel="stylesheet" href="css/header-enhanced.css">
+    <style>
+        /* Checkout Specific Styles */
+        .checkout-container {
+            padding: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Multi-step progress indicators */
+        .checkout-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative;
+            padding: 0 10px;
+        }
+        
+        .checkout-steps::before {
+            content: "";
+            position: absolute;
+            top: 30px;
+            left: 60px;
+            right: 60px;
+            height: 1px;
+            background-color: #e0e0e0;
+            z-index: 0;
+        }
+        
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            color: #999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .step.active .step-number {
+            background-color: #12d65c;
+            color: white;
+        }
+        
+        .step.completed .step-number {
+            background-color: #12d65c;
+            color: white;
+        }
+        
+        .step-label {
+            font-size: 14px;
+            color: #999;
+        }
+        
+        .step.active .step-label {
+            color: #12d65c;
+            font-weight: 500;
+        }
+        
+        /* Form styling */
+        .checkout-form {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus {
+            border-color: #12d65c;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(18, 214, 92, 0.1);
+        }
+        
+        .checkout-step {
+            display: none;
+        }
+        
+        .checkout-step.active {
+            display: block;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 20px;
+            color: #999;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        /* Navigation buttons */
+        .step-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .prev-step-btn {
+            padding: 12px 25px;
+            background-color: #f5f5f5;
+            border: none;
+            border-radius: 25px;
+            color: #666;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .next-step-btn {
+            padding: 12px 25px;
+            background: linear-gradient(90deg, #00e4ff 0%, #12d65c 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .prev-step-btn:hover {
+            background-color: #eee;
+        }
+        
+        .next-step-btn:hover {
+            background: linear-gradient(90deg, #12d65c 0%, #00e4ff 100%);
+        }
+        
+        /* Order summary styles */
+        .order-summary {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .summary-row.total {
+            margin-top: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #000;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        
+        .place-order-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(90deg, #00e4ff 0%, #12d65c 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .place-order-btn:hover {
+            background: linear-gradient(90deg, #12d65c 0%, #00e4ff 100%);
+        }
+        
+        /* Success message */
+        .order-success {
+            text-align: center;
+            padding: 30px 20px;
+            display: none;
+        }
+        
+        .order-success i {
+            font-size: 70px;
+            color: #12d65c;
+            margin-bottom: 20px;
+        }
+        
+        /* Updated payment method styles */
+        .payment-methods {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        /* Razorpay specific styles */
+        .razorpay-method {
+            background-color: #f5f8ff;
+            border-color: #2d89ef;
+        }
+        
+        .razorpay-method.active {
+            background-color: #e5f0ff;
+            border-color: #2d89ef;
+            border-width: 2px;
+        }
+        
+        .razorpay-method img {
+            max-width: 60px;
+            margin: 0 auto 5px;
+        }
+        
+        .payment-method {
+            flex: 1;
+            min-width: 90px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .payment-method.active {
+            border-color: #12d65c;
+            background-color: rgba(18, 214, 92, 0.05);
+        }
+        
+        .payment-method i {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: #12d65c; /* All payment icons are green */
+            display: block;
+        }
+        
+        .payment-method p {
+            font-size: 12px;
+            margin: 0;
+            color: #666;
+        }
+        
+        .payment-method.active p {
+            color: #12d65c;
+            font-weight: 500;
+        }
+        
+        /* Order item styles for review page */
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 10px;
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+            margin-bottom: 15px;
+        }
+        
+        .order-item-content {
+            display: flex;
+            align-items: center;
+        }
+        
+        .order-item-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-right: 12px;
+            border: 1px solid #eee;
+            background-color: #f9f9f9;
+        }
+        
+        .order-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .order-item-details {
+            flex: 1;
+        }
+        
+        .order-item-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+        
+        .order-item-quantity {
+            color: #777;
+            font-size: 12px;
+        }
+        
+        .order-item-price {
+            font-weight: 600;
+            font-size: 14px;
+        }
+    </style>
+    <link rel="stylesheet" href="css/camera-modal.css">
+</head>
+<body class="checkout-page">
+    <!-- Direct pincode handler script -->
+    <script>
+        // Make sure this runs first and reliably
+        window.PINCODE_DATABASE = {
+            // Delhi & NCR
+            '110001': { city: 'New Delhi', state: 'Delhi' },
+            '110002': { city: 'New Delhi', state: 'Delhi' },
+            '110003': { city: 'New Delhi', state: 'Delhi' },
+            '110005': { city: 'New Delhi', state: 'Delhi' },
+            '110006': { city: 'New Delhi', state: 'Delhi' },
+            '110007': { city: 'New Delhi', state: 'Delhi' },
+            
+            // Mumbai & Maharashtra
+            '400001': { city: 'Mumbai', state: 'Maharashtra' },
+            '400002': { city: 'Mumbai', state: 'Maharashtra' },
+            '400003': { city: 'Mumbai', state: 'Maharashtra' },
+            '400004': { city: 'Mumbai', state: 'Maharashtra' },
+            '400005': { city: 'Mumbai', state: 'Maharashtra' },
+            
+            // Kolkata & West Bengal
+            '700001': { city: 'Kolkata', state: 'West Bengal' },
+            '700002': { city: 'Kolkata', state: 'West Bengal' },
+            '700003': { city: 'Kolkata', state: 'West Bengal' },
+            
+            // Chennai & Tamil Nadu
+            '600001': { city: 'Chennai', state: 'Tamil Nadu' },
+            '600002': { city: 'Chennai', state: 'Tamil Nadu' },
+            '600003': { city: 'Chennai', state: 'Tamil Nadu' },
+            
+            // Bangalore & Karnataka
+            '560001': { city: 'Bengaluru', state: 'Karnataka' },
+            '560002': { city: 'Bengaluru', state: 'Karnataka' },
+            '560003': { city: 'Bengaluru', state: 'Karnataka' },
+            '560004': { city: 'Bengaluru', state: 'Karnataka' },
+            '560005': { city: 'Bengaluru', state: 'Karnataka' },
+            
+            // Hyderabad & Telangana
+            '500001': { city: 'Hyderabad', state: 'Telangana' },
+            '500002': { city: 'Hyderabad', state: 'Telangana' },
+            '500003': { city: 'Hyderabad', state: 'Telangana' },
+            '500004': { city: 'Hyderabad', state: 'Telangana' },
+            '500005': { city: 'Hyderabad', state: 'Telangana' },
+            
+            // Add more major cities
+            '380001': { city: 'Ahmedabad', state: 'Gujarat' },
+            '380006': { city: 'Ahmedabad', state: 'Gujarat' },
+            '380013': { city: 'Ahmedabad', state: 'Gujarat' },
+            '380015': { city: 'Ahmedabad', state: 'Gujarat' },
+            '302001': { city: 'Jaipur', state: 'Rajasthan' },
+            '302002': { city: 'Jaipur', state: 'Rajasthan' },
+            '302003': { city: 'Jaipur', state: 'Rajasthan' },
+            '226001': { city: 'Lucknow', state: 'Uttar Pradesh' },
+            '226002': { city: 'Lucknow', state: 'Uttar Pradesh' },
+            '226003': { city: 'Lucknow', state: 'Uttar Pradesh' },
+            '800001': { city: 'Patna', state: 'Bihar' },
+            '800002': { city: 'Patna', state: 'Bihar' },
+            '800003': { city: 'Patna', state: 'Bihar' },
+            '641001': { city: 'Coimbatore', state: 'Tamil Nadu' },
+            '641002': { city: 'Coimbatore', state: 'Tamil Nadu' },
+        };
+        
+        // PIN code regions by first digit
+        window.PINCODE_REGIONS = {
+            '1': { city: 'Delhi Area', state: 'Delhi' },
+            '2': { city: 'Uttar Pradesh Area', state: 'Uttar Pradesh' },
+            '3': { city: 'Rajasthan Area', state: 'Rajasthan' },
+            '4': { city: 'Maharashtra Area', state: 'Maharashtra' },
+            '5': { city: 'Telangana Area', state: 'Telangana' },
+            '6': { city: 'Tamil Nadu Area', state: 'Tamil Nadu' },
+            '7': { city: 'West Bengal Area', state: 'West Bengal' },
+            '8': { city: 'Eastern Area', state: 'Bihar' },
+            '9': { city: 'North-East Area', state: 'Assam' }
+        };
+    </script>
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Ultra Premium Header Section -->
+        <header class="premium-header">
+            <!-- Top curved background with pattern overlay -->
+            <div class="premium-header-bg"></div>
+            
+            <!-- Main header content -->
+            <div class="header-content">
+                <div class="header-left">
+                    <button class="fancy-back-button" onclick="history.back()">
+                        <i class="fas fa-arrow-left"></i>
+                        <span class="btn-ripple"></span>
+                    </button>
+                    <div class="premium-logo">
+                        <div class="logo-icon-container">
+                            <i class="fas fa-shopping-bag brand-icon"></i>
+                        </div>
+                        <div class="logo-text">
+                            <h1>OVRIN</h1>
+                            <div class="logo-shine"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="header-center">
+                    <div class="checkout-title">
+                        <div class="title-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <h2>SECURE CHECKOUT</h2>
+                        <div class="badge-premium">PREMIUM</div>
+                    </div>
+                    <div class="checkout-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill"></div>
+                        </div>
+                        <div class="progress-text">Step 1 of 3: Shipping</div>
+                    </div>
+                </div>
+                
+                <div class="header-right">
+                    <div class="notification-bell">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-dot"></span>
+                    </div>
+                    <div class="header-secure">
+                        <div class="secure-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="secure-badge">SECURE</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bottom Trust Bar -->
+            <div class="trust-bar">
+                <div class="trust-item">
+                    <i class="fas fa-lock"></i>
+                    <span>Encrypted Checkout</span>
+                </div>
+                <div class="trust-separator"></div>
+                <div class="trust-item">
+                    <i class="fas fa-undo"></i>
+                    <span>Easy Returns</span>
+                </div>
+                <div class="trust-separator"></div>
+                <div class="trust-item">
+                    <i class="fas fa-truck-fast"></i>
+                    <span>Fast Delivery</span>
+                </div>
+                <div class="trust-separator"></div>
+                <div class="trust-item">
+                    <i class="fas fa-headset"></i>
+                    <span>24/7 Support</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Premium Header Styles -->
+        <style>
+            /* Base Header Styles */
+            .premium-header {
+                position: relative;
+                padding: 18px 0 0;
+                overflow: hidden;
+                border-bottom: 4px solid #ff0066;
+                box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+                z-index: 10;
+            }
+            
+            /* Background with pattern overlay */
+            .premium-header-bg {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(135deg, #00c853 0%, #2e7d32 70%, #1a237e 100%);
+                z-index: -1;
+                overflow: hidden;
+            }
+            
+            .premium-header-bg:before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(to right, rgba(255,215,0,0.1), rgba(255,215,0,0) 70%);
+            }
+            
+            .premium-header-bg:after {
+                content: '';
+                position: absolute;
+                top: -50px;
+                right: -50px;
+                width: 100px;
+                height: 100px;
+                background: radial-gradient(circle, rgba(255,215,0,0.9) 0%, rgba(255,215,0,0) 70%);
+                border-radius: 50%;
+                animation: headerGlow 8s infinite linear;
+            }
+            
+            .premium-header-bg:before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.12'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+                opacity: 0.2;
+            }
+            
+            .premium-header-bg:after {
+                content: '';
+                position: absolute;
+                top: -50px;
+                right: -50px;
+                width: 100px;
+                height: 100px;
+                background: radial-gradient(circle, rgba(255,215,0,0.9) 0%, rgba(255,215,0,0) 70%);
+                border-radius: 50%;
+                animation: headerGlow 8s infinite linear;
+            }
+            
+            /* Header Content */
+            .header-content {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 15px;
+                position: relative;
+            }
+            
+            /* Left Section */
+            .header-left {
+                display: flex;
+                align-items: center;
+            }
+            
+            .fancy-back-button {
+                position: relative;
+                background: rgba(255,255,255,0.2);
+                border: none;
+                color: #ffffff;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 15px;
+                cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                overflow: hidden;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1), inset 0 1px 1px rgba(255,255,255,0.3);
+            }
+            
+            .fancy-back-button:hover {
+                transform: translateX(-3px);
+                background: rgba(255,255,255,0.25);
+                box-shadow: 0 6px 12px rgba(0,0,0,0.15), inset 0 1px 1px rgba(255,255,255,0.3);
+            }
+            
+            .fancy-back-button:active {
+                transform: translateX(-2px) scale(0.96);
+            }
+            
+            .btn-ripple {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 0;
+                height: 0;
+                background: rgba(255,255,255,0.3);
+                border-radius: 50%;
+                transform: translate(-50%, -50%);
+                opacity: 0;
+            }
+            
+            .fancy-back-button:hover .btn-ripple {
+                animation: ripple 0.8s ease-out;
+            }
+            
+            .premium-logo {
+                display: flex;
+                align-items: center;
+            }
+            
+            .logo-icon-container {
+                width: 36px;
+                height: 36px;
+                background: linear-gradient(135deg, #ff0066 0%, #aa00ff 100%);
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 10px;
+                position: relative;
+                box-shadow: 0 3px 8px rgba(233, 30, 99, 0.3);
+                animation: float 3s ease-in-out infinite;
+            }
+            
+            .logo-icon-container:before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+                border-radius: 12px;
+            }
+            
+            .brand-icon {
+                font-size: 20px;
+                color: #ffffff;
+            }
+            
+            .logo-text {
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .logo-text h1 {
+                font-size: 24px;
+                color: #ffffff;
+                margin: 0;
+                font-weight: 700;
+                letter-spacing: 1px;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            }
+            
+            .logo-shine {
+                position: absolute;
+                top: 0;
+                left: -180%;
+                width: 80%;
+                height: 100%;
+                background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%);
+                transform: skewX(-20deg);
+                animation: shine 4s infinite;
+            }
+            
+            /* Center Section */
+            .header-center {
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .checkout-title {
+                display: flex;
+                align-items: center;
+                margin-bottom: 5px;
+            }
+            
+            .title-icon {
+                font-size: 16px;
+                margin-right: 8px;
+                background: rgba(255,255,255,0.2);
+                width: 28px;
+                height: 28px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 8px;
+                color: #ffffff;
+            }
+            
+            .checkout-title h2 {
+                font-size: 18px;
+                font-weight: 600;
+                color: #ffffff;
+                margin: 0;
+                letter-spacing: 1px;
+                text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+                position: relative;
+            }
+            
+            .badge-premium {
+                background: linear-gradient(90deg, #e91e63, #9c27b0);
+                color: #ffffff;
+                font-size: 9px;
+                padding: 2px 6px;
+                border-radius: 10px;
+                margin-left: 8px;
+                font-weight: 700;
+                letter-spacing: 0.5px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                border: 1px solid rgba(255,255,255,0.3);
+                animation: badgePulse 3s infinite alternate;
+            }
+            
+            .checkout-progress {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+            }
+            
+            .progress-bar {
+                width: 200px;
+                height: 4px;
+                background: rgba(255,255,255,0.2);
+                border-radius: 4px;
+                overflow: hidden;
+                margin-top: 8px;
+            }
+            
+            .progress-fill {
+                height: 100%;
+                width: 33.33%;
+                background: linear-gradient(90deg, #e91e63, #9c27b0);
+                border-radius: 4px;
+                position: relative;
+                animation: progressBounce 1.5s ease-out forwards;
+            }
+            
+            .progress-fill:after {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 8px;
+                height: 100%;
+                background: rgba(255,255,255,0.8);
+                animation: progressPulse 1.5s infinite;
+            }
+            
+            .progress-text {
+                font-size: 11px;
+                color: rgba(255,255,255,0.9);
+                margin-top: 5px;
+                text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            }
+            
+            /* Right Section */
+            .header-right {
+                display: flex;
+                align-items: center;
+            }
+            
+            .notification-bell {
+                position: relative;
+                width: 40px;
+                height: 40px;
+                background: rgba(255,255,255,0.15);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 15px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                border: 1px solid rgba(255,255,255,0.1);
+                box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
+            }
+            
+            .notification-bell:hover {
+                background: rgba(255,255,255,0.25);
+                transform: scale(1.05);
+            }
+            
+            .notification-bell i {
+                font-size: 16px;
+                color: #ffffff;
+            }
+            
+            .notification-dot {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                width: 10px;
+                height: 10px;
+                background: #ff0066;
+                border-radius: 50%;
+                border: 2px solid #2e7d32;
+                animation: notificationPulse 2s infinite;
+            }
+            
+            .header-secure {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                cursor: pointer;
+            }
+            
+            .secure-icon {
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+                color: #e6e6e6;
+                margin-bottom: 2px;
+                animation: secureIconBounce 2s infinite alternate;
+            }
+            
+            .secure-badge {
+                background: rgba(255,255,255,0.15);
+                color: #e6e6e6;
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-size: 9px;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+            }
+            
+            /* Trust Bar */
+            .premium-header:after {
+                content: '';
+                position: absolute;
+                bottom: -2px;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: linear-gradient(to right, rgba(255,215,0,0.8), #ff0066, #aa00ff, rgba(255,215,0,0.8));
+                z-index: 1;
+            }
+            
+            .trust-bar {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(0,0,0,0.15);
+                padding: 8px 15px;
+                margin-top: 15px;
+                border-top: 1px solid rgba(255,255,255,0.1);
+            }
+            
+            .trust-item {
+                display: flex;
+                align-items: center;
+                font-size: 12px;
+                color: rgba(255,255,255,0.85);
+                margin: 0 10px;
+                text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            }
+            
+            .trust-item i {
+                margin-right: 6px;
+                font-size: 11px;
+                color: #ff4081;
+            }
+            
+            .trust-separator {
+                width: 4px;
+                height: 4px;
+                background: rgba(255,255,255,0.3);
+                border-radius: 50%;
+            }
+            
+            /* Animations */
+            /* Add a subtle gold accent to the progress bar */
+            .progress-bar {
+                border: 1px solid rgba(255,215,0,0.3);
+                box-shadow: 0 0 5px rgba(255,215,0,0.2);
+            }
+            
+            /* Add shine to the badge */
+            .badge-premium {
+                background: linear-gradient(90deg, #ff0066, #aa00ff);
+                border: 1px solid rgba(255,215,0,0.6);
+                box-shadow: 0 0 10px rgba(255,215,0,0.3);
+            }
+            
+            /* Add golden glow to the secure icon */
+            .secure-icon i {
+                color: #ffe57f;
+                text-shadow: 0 0 5px rgba(255,215,0,0.5);
+            }
+            
+            @keyframes notificationPulse {
+                0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(233, 30, 99, 0.7); }
+                70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(233, 30, 99, 0); }
+                100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(233, 30, 99, 0); }
+            }
+            
+            @keyframes shine {
+                0% { left: -180%; }
+                100% { left: 180%; }
+            }
+            
+            @keyframes ripple {
+                0% { width: 0; height: 0; opacity: 0.5; }
+                100% { width: 150px; height: 150px; opacity: 0; }
+            }
+            
+            @keyframes float {
+                0% { transform: translateY(0); }
+                50% { transform: translateY(-4px); }
+                100% { transform: translateY(0); }
+            }
+            
+            @keyframes headerGlow {
+                0% { transform: rotate(0deg) translateX(0); opacity: 0.3; }
+                100% { transform: rotate(360deg) translateX(180px); opacity: 0; }
+            }
+            
+            @keyframes badgePulse {
+                0% { transform: scale(1); }
+                100% { transform: scale(1.1); }
+            }
+            
+            @keyframes secureIconBounce {
+                0% { transform: translateY(0); }
+                100% { transform: translateY(-3px); }
+            }
+            
+            @keyframes progressBounce {
+                0% { width: 0; }
+                60% { width: 38%; }
+                100% { width: 33.33%; }
+            }
+            
+            @keyframes progressPulse {
+                0% { opacity: 0.8; }
+                50% { opacity: 0.3; }
+                100% { opacity: 0.8; }
+            }
+        </style>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="checkout-container" id="checkout-container">
+                <!-- Multi-step checkout form -->
+                <div class="checkout-form">
+                    <span class="modal-close" id="close-checkout">&times;</span>
+                    
+                    <!-- Progress Indicators -->
+                    <div class="checkout-steps">
+                        <div class="step active" data-step="1">
+                            <div class="step-number">1</div>
+                            <div class="step-label">Shipping</div>
+                        </div>
+                        <div class="step" data-step="2">
+                            <div class="step-number">2</div>
+                            <div class="step-label">Payment</div>
+                        </div>
+                        <div class="step" data-step="3">
+                            <div class="step-number">3</div>
+                            <div class="step-label">Review</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 1: Shipping Information -->
+                    <div class="checkout-step active" id="shipping-step">
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-input" id="fullname" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone</label>
+                            <input type="tel" class="form-input" id="phone" placeholder="Enter your phone number" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Alternate Phone (Optional)</label>
+                            <input type="tel" class="form-input" id="alt-phone" placeholder="Enter alternative phone number">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">PIN Code *</label>
+                            <div style="position: relative; display: flex; gap: 10px;">
+                                <input type="text" class="form-input" id="pincode" placeholder="Enter PIN code" maxlength="6" pattern="[0-9]{6}" required style="flex: 1;">
+                                <button type="button" id="check-pincode" class="btn" style="background-color: #e91e63; color: white; border: none; padding: 0 15px; border-radius: 4px;">Find City</button>
+                                <div id="pincode-loader" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: none;">
+                                    <i class="fas fa-circle-notch fa-spin" style="color: #e91e63;"></i>
+                                </div>
+                            </div>
+                            <div id="pincode-status" style="margin-top: 5px; display: none; padding: 8px; border-left: 4px solid #e91e63; background-color: #f8f8f8; border-radius: 4px; font-weight: bold;"></div>
+                            <div id="pincode-details" style="margin-top: 8px; display: none; border-left: 3px solid #e91e63; padding-left: 10px; font-size: 13px;"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">State *</label>
+                            <input type="text" class="form-input" id="state" placeholder="Enter state" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">City *</label>
+                            <input type="text" class="form-input" id="city" placeholder="Enter city" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Landmark</label>
+                            <input type="text" class="form-input" id="landmark" placeholder="Enter landmark">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Address *</label>
+                            <input type="text" class="form-input" id="address" placeholder="Enter full address" required>
+                        </div>
+                        
+                        <div class="step-buttons">
+                            <button type="button" class="prev-step-btn" onclick="history.back()">Cancel</button>
+                            <button type="button" class="next-step-btn" id="shipping-next">Continue</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 2: Payment Information -->
+                    <div class="checkout-step" id="payment-step">
+                        <div class="form-group">
+                            <label class="form-label">Payment Method</label>
+                            <div class="payment-methods">
+                                <div class="payment-method active" data-method="credit-card">
+                                    <i class="fas fa-credit-card"></i>
+                                    <p>Credit Card</p>
+                                </div>
+                                <div class="payment-method" data-method="debit-card">
+                                    <i class="fas fa-credit-card"></i>
+                                    <p>Debit Card</p>
+                                </div>
+                                <div class="payment-method" data-method="upi">
+                                    <i class="fas fa-mobile-alt"></i>
+                                    <p>UPI</p>
+                                </div>
+                                <div class="payment-method" data-method="cod">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    <p>Cash on Delivery</p>
+                                </div>
+
+                            </div>
+                        </div>
+                        
+                        <div id="credit-card-form">
+                            <div class="form-group">
+                                <label class="form-label">Card Number</label>
+                                <input type="text" class="form-input" id="cc-number" placeholder="1234 5678 9012 3456" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Cardholder Name</label>
+                                <input type="text" class="form-input" id="cc-name" placeholder="John Doe" required>
+                            </div>
+                            <div style="display: flex; gap: 15px;">
+                                <div class="form-group" style="flex: 1;">
+                                    <label class="form-label">Expiry Date</label>
+                                    <input type="text" class="form-input" id="cc-expiry" placeholder="MM/YY" required>
+                                </div>
+                                <div class="form-group" style="flex: 1;">
+                                    <label class="form-label">CVV</label>
+                                    <input type="text" class="form-input" id="cc-cvv" placeholder="123" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="debit-card-form" style="display:none;">
+                            <div class="form-group">
+                                <label class="form-label">Debit Card Number</label>
+                                <input type="text" class="form-input" id="dc-number" placeholder="1234 5678 9012 3456" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Cardholder Name</label>
+                                <input type="text" class="form-input" id="dc-name" placeholder="John Doe" required>
+                            </div>
+                            <div style="display: flex; gap: 15px;">
+                                <div class="form-group" style="flex: 1;">
+                                    <label class="form-label">Expiry Date</label>
+                                    <input type="text" class="form-input" id="dc-expiry" placeholder="MM/YY" required>
+                                </div>
+                                <div class="form-group" style="flex: 1;">
+                                    <label class="form-label">CVV</label>
+                                    <input type="text" class="form-input" id="dc-cvv" placeholder="123" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="upi-form" style="display:none;">
+                            <div class="form-group">
+                                <label class="form-label">UPI ID</label>
+                                <input type="text" class="form-input" id="upi-id" placeholder="yourname@upi" required>
+                                <small style="display:block; margin-top:5px; color:#666;">Example: yourname@ybl, yourname@okhdfcbank, etc.</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Verify UPI ID</label>
+                                <input type="text" class="form-input" id="verify-upi-id" placeholder="Confirm your UPI ID" required>
+                            </div>
+                        </div>
+                        
+                        <div id="cod-form" style="display:none;">
+                            <div class="form-group">
+                                <p style="background-color: #f0f8ff; padding: 12px; border-radius: 8px; border-left: 4px solid #0066cc; margin-top: 10px;">
+                                    <i class="fas fa-info-circle" style="color: #0066cc; margin-right: 8px;"></i>
+                                    A cash payment will be collected at the time of delivery. Please keep exact change ready.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div id="razorpay-form" style="display:none;">
+                            <div class="form-group">
+                                <p style="background-color: #f5f8ff; padding: 12px; border-radius: 8px; border-left: 4px solid #2d89ef; margin-top: 10px;">
+                                    <i class="fas fa-bolt" style="color: #2d89ef; margin-right: 8px;"></i>
+                                    Pay securely with Razorpay. When you click "Place Order", you will be redirected to the Razorpay payment gateway to complete your purchase.
+                                </p>
+                                <div style="text-align: center; margin-top: 15px;">
+                                    <img src="https://razorpay.com/assets/razorpay-logo.svg" alt="Razorpay" style="max-width: 150px;">
+                                </div>
+                                <div style="margin-top: 15px; padding: 12px; background-color: #e9f7fe; border-radius: 8px;">
+                                    <h4 style="font-size: 14px; margin-top: 0;">Payment Method Benefits:</h4>
+                                    <ul style="padding-left: 20px; margin-bottom: 0;">
+                                        <li>Secure payment processing</li>
+                                        <li>Multiple payment options (cards, UPI, wallet)</li>
+                                        <li>Instant payment confirmation</li>
+                                        <li>No additional transaction fees</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="step-buttons">
+                            <button type="button" class="prev-step-btn" id="payment-prev">Back</button>
+                            <button type="button" class="next-step-btn" id="payment-next">Continue</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3: Review Order -->
+                    <div class="checkout-step" id="review-step">
+                        <h3 style="margin-top: 0; margin-bottom: 15px;">Order Summary</h3>
+                        <div class="order-summary">
+                            <div id="order-items">
+                                <!-- Order items will be dynamically added here -->
+                            </div>
+                            
+                            <div class="summary-row">
+                                <span>Subtotal</span>
+                                <span id="subtotal">₹0.00</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Shipping</span>
+                                <span id="shipping">₹0.00</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Tax</span>
+                                <span id="tax">₹0.00</span>
+                            </div>
+                            <div class="summary-row total">
+                                <span>Total</span>
+                                <span id="total">₹0.00</span>
+                            </div>
+                        </div>
+                        
+                        <h3>Shipping Details</h3>
+                        <div id="shipping-details" style="font-size: 14px; margin-bottom: 20px;">
+                            <!-- Shipping details will be populated here -->
+                        </div>
+                        
+                        <div class="step-buttons">
+                            <button type="button" class="prev-step-btn" id="review-prev">Back</button>
+                            <button type="button" class="place-order-btn" id="place-order-btn">Place Order</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Order Success Message (Hidden initially) -->
+                <div class="order-success" id="order-success">
+                    <i class="fas fa-check-circle"></i>
+                    <h2>Order Placed Successfully!</h2>
+                    <p>Your order has been placed successfully. You will receive a confirmation email shortly.</p>
+                    <a href="index.html" class="back-to-home">Back to Home</a>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-search"></i>
+                <span>Search</span>
+            </a>
+            <a href="cart.html" class="nav-item active">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Cart</span>
+            </a>
+            <a href="#" class="nav-item" id="profile-nav">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="profile-modal" class="profile-modal hidden">
+        <div class="profile-modal-content">
+            <!-- Auth Section (Initial View) -->
+            <div id="auth-section" class="profile-section">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Welcome</h2>
+                    </div>
+                    <span class="close-profile">&times;</span>
+                </div>
+                <div class="auth-buttons-container">
+                    <div class="auth-button-wrapper">
+                        <button id="register-btn" class="profile-btn register-btn">Register</button>
+                        <p class="auth-subtext">(New to OVRIN?)</p>
+                    </div>
+                    <div class="auth-button-wrapper">
+                        <button id="login-btn" class="profile-btn login-btn">Login</button>
+                        <p class="auth-subtext">Existing users</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Registration Form -->
+            <div id="register-section" class="profile-section hidden">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Create Account</h2>
+                    </div>
+                    <span class="back-to-auth">&larr;</span>
+                    <span class="close-profile">&times;</span>
+                </div>
+                <form id="register-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="register-name">Full Name</label>
+                        <input type="text" id="register-name" class="form-control" placeholder="John Smith" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email Address</label>
+                        <input type="email" id="register-email" class="form-control" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Password</label>
+                        <input type="password" id="register-password" class="form-control" placeholder="Minimum 6 characters" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm Password</label>
+                        <input type="password" id="confirm-password" class="form-control" placeholder="Re-enter your password" required>
+                    </div>
+                    <button type="submit" class="profile-btn submit-btn">Create Account</button>
+                    <div class="form-footer">
+                        <p class="terms">By signing up, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a></p>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="login-section" class="profile-section hidden">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Login</h2>
+                    </div>
+                    <span class="back-to-auth">&larr;</span>
+                    <span class="close-profile">&times;</span>
+                </div>
+                <form id="login-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" class="form-control" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" class="form-control" placeholder="********" required>
+                    </div>
+                    <button type="submit" class="profile-btn submit-btn">Login</button>
+                    <div class="form-footer">
+                        <a href="#" class="forgot-password">Forgot Password?</a>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- User Profile Section (After Login) -->
+            <div id="user-profile-section" class="profile-section hidden">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Profile</h2>
+                    </div>
+                    <span class="settings-icon"><i class="fas fa-cog"></i></span>
+                    <span class="close-profile">&times;</span>
+                </div>
+                
+                <!-- User Info Card -->
+                <div class="user-info-card">
+                    <div class="profile-avatar" id="profile-avatar-container">
+                        <img id="profile-image" src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Profile Photo">
+                        <div class="avatar-overlay">
+                            <i class="fas fa-camera"></i>
+                            <span>Change Photo</span>
+                        </div>
+                        <input type="file" id="profile-image-input" accept="image/*" capture="user" class="hidden">
+                    </div>
+                    <h3 id="profile-name" class="user-name">John Doe</h3>
+                    <p id="profile-bio" class="user-bio">Happy Shopper | Member since 2025</p>
+                    <button id="edit-profile-btn" class="profile-btn">Edit Profile</button>
+                </div>
+                
+                <!-- Account Overview Menu -->
+                <div class="account-menu">
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <span class="menu-item-text">My Orders</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <span class="menu-item-text">Wishlist</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <span class="menu-item-text">Payment Methods</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <span class="menu-item-text">Addresses</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-tag"></i>
+                            </div>
+                            <span class="menu-item-text">Coupons & Rewards</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-question-circle"></i>
+                            </div>
+                            <span class="menu-item-text">Support & Help Center</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Section -->
+                <div class="settings-section">
+                    <h3 class="section-title">Settings</h3>
+                    
+                    <div class="setting-item">
+                        <div class="setting-name">Dark Mode</div>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="dark-mode-toggle">
+                            <label for="dark-mode-toggle"></label>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-name">Notifications</div>
+                        <div class="setting-action">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-name">Privacy & Security</div>
+                        <div class="setting-action">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <button id="logout-btn" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Edit Profile Section -->
+            <div id="edit-profile-section" class="profile-section hidden">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Edit Profile</h2>
+                    </div>
+                    <span class="back-to-profile">&larr;</span>
+                    <span class="close-profile">&times;</span>
+                </div>
+                <form id="edit-profile-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="edit-name">Full Name</label>
+                        <input type="text" id="edit-name" class="form-control" placeholder="Your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-email">Email Address</label>
+                        <input type="email" id="edit-email" class="form-control" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-bio">Bio</label>
+                        <textarea id="edit-bio" class="form-control" placeholder="Tell us about yourself" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-avatar">Profile Picture URL</label>
+                        <input type="url" id="edit-avatar" class="form-control" placeholder="https://example.com/your-image.jpg">
+                    </div>
+                    <button type="submit" class="profile-btn submit-btn">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/checkout.js"></script>
+    <script src="js/profile-modal.js"></script>
+    
+    <!-- Direct PIN code auto-fetch implementation (simplified) -->
+    <script>
+        // PIN code database with major Indian cities
+        const PIN_CODE_DATA = {
+            // Delhi & NCR
+            '110001': { city: 'New Delhi', state: 'Delhi' },
+            '110002': { city: 'New Delhi', state: 'Delhi' },
+            '110003': { city: 'New Delhi', state: 'Delhi' },
+            '110020': { city: 'New Delhi', state: 'Delhi' },
+            '110055': { city: 'Delhi', state: 'Delhi' },
+            '110084': { city: 'Delhi', state: 'Delhi' },
+            '122001': { city: 'Gurugram', state: 'Haryana' },
+            '122002': { city: 'Gurugram', state: 'Haryana' },
+            '201301': { city: 'Noida', state: 'Uttar Pradesh' },
+
+            // Mumbai & Maharashtra
+            '400001': { city: 'Mumbai', state: 'Maharashtra' },
+            '400002': { city: 'Mumbai', state: 'Maharashtra' },
+            '400003': { city: 'Mumbai', state: 'Maharashtra' },
+            '400050': { city: 'Mumbai', state: 'Maharashtra' },
+            '400051': { city: 'Mumbai', state: 'Maharashtra' },
+            '400076': { city: 'Mumbai', state: 'Maharashtra' },
+            '411001': { city: 'Pune', state: 'Maharashtra' },
+            '411002': { city: 'Pune', state: 'Maharashtra' },
+
+            // Kolkata & West Bengal
+            '700001': { city: 'Kolkata', state: 'West Bengal' },
+            '700012': { city: 'Kolkata', state: 'West Bengal' },
+            '700016': { city: 'Kolkata', state: 'West Bengal' },
+            '700091': { city: 'Kolkata', state: 'West Bengal' },
+
+            // Chennai & Tamil Nadu
+            '600001': { city: 'Chennai', state: 'Tamil Nadu' },
+            '600004': { city: 'Chennai', state: 'Tamil Nadu' },
+            '600008': { city: 'Chennai', state: 'Tamil Nadu' },
+            '600040': { city: 'Chennai', state: 'Tamil Nadu' },
+            '641001': { city: 'Coimbatore', state: 'Tamil Nadu' },
+            '641002': { city: 'Coimbatore', state: 'Tamil Nadu' },
+
+            // Bangalore & Karnataka
+            '560001': { city: 'Bengaluru', state: 'Karnataka' },
+            '560002': { city: 'Bengaluru', state: 'Karnataka' },
+            '560008': { city: 'Bengaluru', state: 'Karnataka' },
+            '560011': { city: 'Bengaluru', state: 'Karnataka' },
+            '560034': { city: 'Bengaluru', state: 'Karnataka' },
+            '560076': { city: 'Bengaluru', state: 'Karnataka' },
+
+            // Hyderabad & Telangana
+            '500001': { city: 'Hyderabad', state: 'Telangana' },
+            '500003': { city: 'Hyderabad', state: 'Telangana' },
+            '500004': { city: 'Hyderabad', state: 'Telangana' },
+            '500016': { city: 'Hyderabad', state: 'Telangana' },
+            '500034': { city: 'Hyderabad', state: 'Telangana' },
+            '500081': { city: 'Hyderabad', state: 'Telangana' },
+
+            // Other major cities
+            '380001': { city: 'Ahmedabad', state: 'Gujarat' },
+            '380006': { city: 'Ahmedabad', state: 'Gujarat' },
+            '302001': { city: 'Jaipur', state: 'Rajasthan' },
+            '302015': { city: 'Jaipur', state: 'Rajasthan' },
+            '226001': { city: 'Lucknow', state: 'Uttar Pradesh' },
+            '226010': { city: 'Lucknow', state: 'Uttar Pradesh' },
+            '800001': { city: 'Patna', state: 'Bihar' },
+            '452001': { city: 'Indore', state: 'Madhya Pradesh' }
+        };
+
+        // PIN code regions by first digit
+        const PIN_CODE_REGIONS = {
+            '1': { defaultCity: 'Delhi Region', defaultState: 'Delhi' },
+            '2': { defaultCity: 'Uttar Pradesh Region', defaultState: 'Uttar Pradesh' },
+            '3': { defaultCity: 'Rajasthan Region', defaultState: 'Rajasthan' },
+            '4': { defaultCity: 'Maharashtra Region', defaultState: 'Maharashtra' },
+            '5': { defaultCity: 'Telangana Region', defaultState: 'Telangana' },
+            '6': { defaultCity: 'Tamil Nadu Region', defaultState: 'Tamil Nadu' },
+            '7': { defaultCity: 'West Bengal Region', defaultState: 'West Bengal' },
+            '8': { defaultCity: 'Bihar Region', defaultState: 'Bihar' },
+            '9': { defaultCity: 'Northeast Region', defaultState: 'Assam' }
+        };
+
+        // Function to lookup PIN code data
+        function lookupPincode(pincode) {
+            // Check exact match
+            if (PIN_CODE_DATA[pincode]) {
+                return PIN_CODE_DATA[pincode];
+            }
+            
+            // Check by first digit
+            const firstDigit = pincode.charAt(0);
+            if (PIN_CODE_REGIONS[firstDigit]) {
+                return PIN_CODE_REGIONS[firstDigit];
+            }
+            
+            // Default fallback
+            return { city: 'Unknown City', state: 'Unknown State' };
+        }
+
+        // Function to show toast notifications
+        function showToast(message, type = 'success') {
+            // Create toast container if it doesn't exist
+            let toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toast-container';
+                toastContainer.style.position = 'fixed';
+                toastContainer.style.top = '20px';
+                toastContainer.style.right = '20px';
+                toastContainer.style.zIndex = '9999';
+                document.body.appendChild(toastContainer);
+            }
+            
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.style.minWidth = '250px';
+            toast.style.margin = '10px 0';
+            toast.style.padding = '12px 20px';
+            toast.style.borderRadius = '5px';
+            toast.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+            toast.style.border = '2px solid #e91e63'; // Magenta border per user preference
+            toast.style.fontSize = '14px';
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.3s ease';
+            
+            // Set colors based on toast type
+            if (type === 'success') {
+                toast.style.backgroundColor = '#4caf50'; // Green background per user preference
+                toast.style.color = 'white';
+            } else if (type === 'error') {
+                toast.style.backgroundColor = '#f44336'; // Red for errors
+                toast.style.color = 'white';
+            } else {
+                toast.style.backgroundColor = '#ff9800'; // Orange for info
+                toast.style.color = 'white';
+            }
+            
+            // Set icon based on type
+            const icon = type === 'success' ? 'check-circle' : 
+                         type === 'error' ? 'exclamation-circle' : 'info-circle';
+            
+            // Set toast content
+            toast.innerHTML = `
+                <div style="display: flex; align-items: center;">
+                    <i class="fas fa-${icon}" style="margin-right: 10px;"></i>
+                    <div>
+                        <strong style="color: #9c27b0;">${type === 'success' ? 'Success' : type === 'error' ? 'Error' : 'Info'}:</strong> 
+                        ${message}
+                    </div>
+                </div>
+            `;
+            
+            // Add toast to container
+            toastContainer.appendChild(toast);
+            
+            // Fade in toast
+            setTimeout(() => {
+                toast.style.opacity = '1';
+            }, 10);
+            
+            // Remove toast after 5 seconds
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => {
+                    if (toastContainer.contains(toast)) {
+                        toastContainer.removeChild(toast);
+                    }
+                }, 300);
+            }, 5000);
+        }
+
+        // Function to handle PIN code change
+        function handlePincodeChange(pincode) {
+            const stateInput = document.getElementById('state');
+            const cityInput = document.getElementById('city');
+            const pincodeStatus = document.getElementById('pincode-status');
+            const pincodeLoader = document.getElementById('pincode-loader');
+            
+            // Clear status
+            pincodeStatus.style.display = 'none';
+            
+            // Only proceed if PIN code is 6 digits
+            if (pincode && pincode.length === 6 && /^\d+$/.test(pincode)) {
+                // Show loading indicator
+                pincodeLoader.style.display = 'block';
+                
+                // Show loading status
+                pincodeStatus.textContent = 'Looking up location...';
+                pincodeStatus.style.display = 'block';
+                pincodeStatus.style.color = '#9c27b0'; // Violet per user preference
+                
+                // Simulate API delay for better UX
+                setTimeout(() => {
+                    // Hide loader
+                    pincodeLoader.style.display = 'none';
+                    
+                    // Get location data
+                    const locationData = lookupPincode(pincode);
+                    
+                    // Update form fields
+                    stateInput.value = locationData.state;
+                    cityInput.value = locationData.city;
+                    
+                    // Show success message
+                    pincodeStatus.innerHTML = `<span style="color: #4caf50; font-weight: bold;">✓</span> <span style="color: #333;">Found:</span> <span style="color: #9c27b0; font-weight: bold;">${locationData.city}, ${locationData.state}</span>`;
+                    pincodeStatus.style.display = 'block';
+                    
+                    // Show toast notification
+                    showToast(`Found: ${locationData.city}, ${locationData.state}`, 'success');
+                    
+                }, 500); // 500ms delay for better UX
+            }
+        }
+
+        // Setup event listeners when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const pincodeInput = document.getElementById('pincode');
+            
+            if (pincodeInput) {
+                console.log('Setting up PIN code event listeners');
+                
+                // Add event listeners
+                pincodeInput.addEventListener('change', function() {
+                    handlePincodeChange(this.value);
+                });
+                
+                pincodeInput.addEventListener('blur', function() {
+                    handlePincodeChange(this.value);
+                });
+                
+                // Check if PIN code is already filled
+                if (pincodeInput.value && pincodeInput.value.length === 6) {
+                    handlePincodeChange(pincodeInput.value);
+                }
+            }
+        });
+        
+        // Add the event listeners now if the DOM is already loaded
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            const pincodeInput = document.getElementById('pincode');
+            if (pincodeInput) {
+                console.log('Setting up PIN code event listeners (immediate)');
+                
+                // Add event listeners
+                pincodeInput.addEventListener('change', function() {
+                    handlePincodeChange(this.value);
+                });
+                
+                pincodeInput.addEventListener('blur', function() {
+                    handlePincodeChange(this.value);
+                });
+                
+                // Check if PIN code is already filled
+                if (pincodeInput.value && pincodeInput.value.length === 6) {
+                    handlePincodeChange(pincodeInput.value);
+                }
+            }
+        }
+    </script>
+    <script>
+        // Ultra-reliable PIN code auto-fetch with visual confirmation
+        document.addEventListener('DOMContentLoaded', function() {
+            // PIN code database with major Indian cities
+            const pincodeData = {
+                // Delhi & NCR
+                '110001': { city: 'New Delhi', state: 'Delhi' },
+                '110002': { city: 'New Delhi', state: 'Delhi' },
+                '110003': { city: 'New Delhi', state: 'Delhi' },
+                '110005': { city: 'New Delhi', state: 'Delhi' },
+                '110006': { city: 'New Delhi', state: 'Delhi' },
+                '110007': { city: 'New Delhi', state: 'Delhi' },
+                '110008': { city: 'New Delhi', state: 'Delhi' },
+                '110009': { city: 'New Delhi', state: 'Delhi' },
+                '110010': { city: 'New Delhi', state: 'Delhi' },
+                
+                // Mumbai & Maharashtra
+                '400001': { city: 'Mumbai', state: 'Maharashtra' },
+                '400002': { city: 'Mumbai', state: 'Maharashtra' },
+                '400003': { city: 'Mumbai', state: 'Maharashtra' },
+                '400004': { city: 'Mumbai', state: 'Maharashtra' },
+                '400005': { city: 'Mumbai', state: 'Maharashtra' },
+                '400006': { city: 'Mumbai', state: 'Maharashtra' },
+                '400007': { city: 'Mumbai', state: 'Maharashtra' },
+                
+                // Bengaluru & Karnataka
+                '560001': { city: 'Bengaluru', state: 'Karnataka' },
+                '560002': { city: 'Bengaluru', state: 'Karnataka' },
+                '560003': { city: 'Bengaluru', state: 'Karnataka' },
+                '560004': { city: 'Bengaluru', state: 'Karnataka' },
+                '560005': { city: 'Bengaluru', state: 'Karnataka' },
+                
+                // Chennai & Tamil Nadu
+                '600001': { city: 'Chennai', state: 'Tamil Nadu' },
+                '600002': { city: 'Chennai', state: 'Tamil Nadu' },
+                '600003': { city: 'Chennai', state: 'Tamil Nadu' },
+                '600004': { city: 'Chennai', state: 'Tamil Nadu' },
+                '600005': { city: 'Chennai', state: 'Tamil Nadu' },
+                
+                // Kolkata & West Bengal
+                '700001': { city: 'Kolkata', state: 'West Bengal' },
+                '700002': { city: 'Kolkata', state: 'West Bengal' },
+                '700003': { city: 'Kolkata', state: 'West Bengal' },
+                '700004': { city: 'Kolkata', state: 'West Bengal' },
+                '700005': { city: 'Kolkata', state: 'West Bengal' },
+                
+                // Other major cities
+                '500001': { city: 'Hyderabad', state: 'Telangana' },
+                '500002': { city: 'Hyderabad', state: 'Telangana' },
+                '380001': { city: 'Ahmedabad', state: 'Gujarat' },
+                '380006': { city: 'Ahmedabad', state: 'Gujarat' },
+                '380015': { city: 'Ahmedabad', state: 'Gujarat' },
+                '302001': { city: 'Jaipur', state: 'Rajasthan' },
+                '302002': { city: 'Jaipur', state: 'Rajasthan' },
+                '226001': { city: 'Lucknow', state: 'Uttar Pradesh' },
+                '226002': { city: 'Lucknow', state: 'Uttar Pradesh' },
+                '800001': { city: 'Patna', state: 'Bihar' },
+                '800002': { city: 'Patna', state: 'Bihar' },
+                '641001': { city: 'Coimbatore', state: 'Tamil Nadu' },
+                '641002': { city: 'Coimbatore', state: 'Tamil Nadu' },
+                '411001': { city: 'Pune', state: 'Maharashtra' },
+                '411002': { city: 'Pune', state: 'Maharashtra' },
+                '411003': { city: 'Pune', state: 'Maharashtra' },
+                '201301': { city: 'Noida', state: 'Uttar Pradesh' },
+                '201304': { city: 'Noida', state: 'Uttar Pradesh' }
+            };
+            
+            // First digit mapping for all other PIN codes
+            const regionMap = {
+                '1': { city: 'Delhi Area', state: 'Delhi' },
+                '2': { city: 'Uttar Pradesh Area', state: 'Uttar Pradesh' },
+                '3': { city: 'Rajasthan Area', state: 'Rajasthan' },
+                '4': { city: 'Maharashtra Area', state: 'Maharashtra' },
+                '5': { city: 'Telangana Area', state: 'Telangana' },
+                '6': { city: 'Tamil Nadu Area', state: 'Tamil Nadu' },
+                '7': { city: 'West Bengal Area', state: 'West Bengal' },
+                '8': { city: 'Eastern Area', state: 'Bihar' },
+                '9': { city: 'North-East Area', state: 'Assam' }
+            };
+            
+            // Get all the elements we need
+            const pincodeInput = document.getElementById('pincode');
+            const cityInput = document.getElementById('city');
+            const stateInput = document.getElementById('state');
+            const checkPincodeBtn = document.getElementById('check-pincode');
+            const statusDiv = document.getElementById('pincode-status');
+            
+            // Make sure the status div exists and is configured properly
+            if (!statusDiv) {
+                // Create it if it doesn't exist
+                const newStatusDiv = document.createElement('div');
+                newStatusDiv.id = 'pincode-status';
+                newStatusDiv.style.marginTop = '5px';
+                newStatusDiv.style.display = 'none';
+                newStatusDiv.style.padding = '8px';
+                newStatusDiv.style.borderLeft = '4px solid #e91e63';
+                newStatusDiv.style.backgroundColor = '#f8f8f8';
+                newStatusDiv.style.borderRadius = '4px';
+                newStatusDiv.style.fontWeight = 'bold';
+                
+                // Insert it after the pincode input's parent div
+                if (pincodeInput && pincodeInput.parentNode && pincodeInput.parentNode.parentNode) {
+                    pincodeInput.parentNode.parentNode.appendChild(newStatusDiv);
+                }
+            }
+            
+            // Actual PIN code lookup function
+            function lookupPincode() {
+                // Get a fresh reference to the status div every time
+                const statusDiv = document.getElementById('pincode-status');
+                const pincode = pincodeInput.value.trim();
+                
+                // Only proceed if we have a 6-digit pincode
+                if (pincode && pincode.length === 6 && /^\d+$/.test(pincode)) {
+                    // Try to get an exact match first
+                    if (pincodeData[pincode]) {
+                        // Set the city and state values
+                        cityInput.value = pincodeData[pincode].city;
+                        stateInput.value = pincodeData[pincode].state;
+                        
+                        // Show visual success message in the status div with user's preferred colors
+                        if (statusDiv) {
+                            statusDiv.innerHTML = '<span style="color: #4caf50; font-weight: bold;">✓</span> ' +
+                                           '<span style="color: #333;">PIN found:</span> ' +
+                                           '<span style="color: #9c27b0; font-weight: bold;">' + 
+                                           pincodeData[pincode].city + ', ' + pincodeData[pincode].state + '</span>';
+                            statusDiv.style.display = 'block';
+                        }
+                    }
+                    // Fallback to region based on first digit
+                    else {
+                        const firstDigit = pincode.charAt(0);
+                        if (regionMap[firstDigit]) {
+                            // Set city and state based on region
+                            cityInput.value = regionMap[firstDigit].city;
+                            stateInput.value = regionMap[firstDigit].state;
+                            
+                            // Show fallback message
+                            if (statusDiv) {
+                                statusDiv.innerHTML = '<span style="color: #ff9800; font-weight: bold;">!</span> ' +
+                                               '<span style="color: #333;">Using regional match:</span> ' +
+                                               '<span style="color: #9c27b0; font-weight: bold;">' + 
+                                               regionMap[firstDigit].city + ', ' + 
+                                               regionMap[firstDigit].state + '</span>';
+                                statusDiv.style.display = 'block';
+                            }
+                        }
+                    }
+                } else if (statusDiv) {
+                    // Invalid PIN code format
+                    statusDiv.innerHTML = '<span style="color: #f44336; font-weight: bold;">✘</span> ' +
+                                   '<span style="color: #333;">Please enter a valid 6-digit PIN code</span>';
+                    statusDiv.style.display = 'block';
+                }
+            }
+            
+            // Add event listeners for multiple trigger methods
+            if (pincodeInput) {
+                // When user finishes typing a full 6 digits
+                pincodeInput.addEventListener('input', function() {
+                    if (this.value.length === 6) {
+                        lookupPincode();
+                    }
+                });
+                
+                // When user tabs out of field
+                pincodeInput.addEventListener('blur', lookupPincode);
+            }
+            
+            // Add click handler for the Find City button
+            if (checkPincodeBtn) {
+                checkPincodeBtn.addEventListener('click', function() {
+                    // Show the loader
+                    const loader = document.getElementById('pincode-loader');
+                    if (loader) loader.style.display = 'block';
+                    
+                    // Small delay to show the loader for better UX
+                    setTimeout(function() {
+                        lookupPincode();
+                        if (loader) loader.style.display = 'none';
+                    }, 300);
+                });
+            }
+            
+            // Run the lookup immediately if there's already a value
+            if (pincodeInput && pincodeInput.value && pincodeInput.value.length === 6) {
+                lookupPincode();
+            }
+        });
+    </script>
+<script src="js/orders-access.js"></script>
+    <script src="js/camera-modal.js"></script>
+    <script src="js/camera-access.js"></script>
+    <!-- Razorpay Integration -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="js/razorpay.js"></script>
+</body>
+</html>

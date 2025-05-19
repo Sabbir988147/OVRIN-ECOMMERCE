@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart | OVRIN</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/profile-modal.css">
+    <style>
+        /* Cart Specific Styles */
+        .cart-container {
+            padding: 15px;
+        }
+        
+        .cart-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .cart-items {
+            margin-bottom: 20px;
+        }
+        
+        .cart-item {
+            display: flex;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            position: relative;
+        }
+        
+        .cart-item-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+        
+        .cart-item-details {
+            flex: 1;
+            padding-left: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .cart-item-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .cart-item-price {
+            font-weight: 700;
+            color: #000;
+        }
+        
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+        }
+        
+        .quantity-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid #ddd;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .item-quantity {
+            margin: 0 10px;
+            font-weight: 500;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .remove-item {
+            color: #999;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .cart-summary {
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .summary-row.total {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #000;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        
+        .checkout-btn {
+            width: 100%;
+            height: 50px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .checkout-btn:hover {
+            background-color: #45a049;
+        }
+        
+        .empty-cart {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .empty-cart i {
+            font-size: 60px;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .empty-cart h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .empty-cart p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .continue-shopping {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+    </style>
+    <link rel="stylesheet" href="css/camera-modal.css">`n</head>
+<body>
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header" style="padding-bottom: 10px;">
+            <div class="header-top">
+                <button class="back-button" onclick="history.back()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 class="title" style="font-size: 20px;">Shopping Cart</h1>
+                <div class="notification">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-dot"></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="cart-container" id="cart-container">
+                <!-- Cart content will be loaded dynamically -->
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-search"></i>
+                <span>Search</span>
+            </a>
+            <a href="cart.html" class="nav-item active">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Cart</span>
+            </a>
+            <a href="#" class="nav-item" id="profile-nav">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="profile-modal" class="profile-modal hidden">
+        <div class="profile-modal-content">
+            <!-- Auth Section (Initial View) -->
+            <div id="auth-section" class="profile-section">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Welcome</h2>
+                    </div>
+                    <span class="close-profile">&times;</span>
+                </div>
+                <div class="auth-buttons-container">
+                    <div class="auth-button-wrapper">
+                        <button id="register-btn" class="profile-btn register-btn">Register</button>
+                        <p class="auth-subtext">(New to OVRIN?)</p>
+                    </div>
+                    <div class="auth-button-wrapper">
+                        <button id="login-btn" class="profile-btn login-btn">Login</button>
+                        <p class="auth-subtext">Existing users</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Registration Form -->
+            <div id="register-section" class="profile-section hidden">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Create Account</h2>
+                    </div>
+                    <span class="back-to-auth">&larr;</span>
+                    <span class="close-profile">&times;</span>
+                </div>
+                <form id="register-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="register-name">Full Name</label>
+                        <input type="text" id="register-name" class="form-control" placeholder="John Smith" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email Address</label>
+                        <input type="email" id="register-email" class="form-control" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Password</label>
+                        <input type="password" id="register-password" class="form-control" placeholder="Minimum 6 characters" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm Password</label>
+                        <input type="password" id="confirm-password" class="form-control" placeholder="Re-enter your password" required>
+                    </div>
+                    <button type="submit" class="profile-btn submit-btn">Create Account</button>
+                    <div class="form-footer">
+                        <p class="terms">By signing up, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a></p>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="login-section" class="profile-section hidden">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Login</h2>
+                    </div>
+                    <span class="back-to-auth">&larr;</span>
+                    <span class="close-profile">&times;</span>
+                </div>
+                <form id="login-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" class="form-control" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" class="form-control" placeholder="********" required>
+                    </div>
+                    <button type="submit" class="profile-btn submit-btn">Login</button>
+                    <div class="form-footer">
+                        <a href="#" class="forgot-password">Forgot Password?</a>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- User Profile Section (After Login) -->
+            <div id="user-profile-section" class="profile-section hidden">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Profile</h2>
+                    </div>
+                    <span class="settings-icon"><i class="fas fa-cog"></i></span>
+                    <span class="close-profile">&times;</span>
+                </div>
+                
+                <!-- User Info Card -->
+                <div class="user-info-card">
+                    <div class="profile-avatar" id="profile-avatar-container">
+                        <img id="profile-image" src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Profile Photo">
+                        <div class="avatar-overlay">
+                            <i class="fas fa-camera"></i>
+                            <span>Change Photo</span>
+                        </div>
+                        <input type="file" id="profile-image-input" accept="image/*" capture="user" class="hidden">
+                    </div>
+                    <h3 id="profile-name" class="user-name">John Doe</h3>
+                    <p id="profile-bio" class="user-bio">Happy Shopper | Member since 2025</p>
+                    <button id="edit-profile-btn" class="profile-btn">Edit Profile</button>
+                </div>
+                
+                <!-- Account Overview Menu -->
+                <div class="account-menu">
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <span class="menu-item-text">My Orders</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <span class="menu-item-text">Wishlist</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <span class="menu-item-text">Payment Methods</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <span class="menu-item-text">Addresses</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-tag"></i>
+                            </div>
+                            <span class="menu-item-text">Coupons & Rewards</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-question-circle"></i>
+                            </div>
+                            <span class="menu-item-text">Support & Help Center</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Section -->
+                <div class="settings-section">
+                    <h3 class="section-title">Settings</h3>
+                    
+                    <div class="setting-item">
+                        <div class="setting-name">Dark Mode</div>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="dark-mode-toggle">
+                            <label for="dark-mode-toggle"></label>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-name">Notifications</div>
+                        <div class="setting-action">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-name">Privacy & Security</div>
+                        <div class="setting-action">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <button id="logout-btn" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Edit Profile Section -->
+            <div id="edit-profile-section" class="profile-section hidden">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Edit Profile</h2>
+                    </div>
+                    <span class="back-to-profile">&larr;</span>
+                    <span class="close-profile">&times;</span>
+                </div>
+                <form id="edit-profile-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="edit-name">Full Name</label>
+                        <input type="text" id="edit-name" class="form-control" placeholder="Your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-email">Email Address</label>
+                        <input type="email" id="edit-email" class="form-control" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-bio">Bio</label>
+                        <textarea id="edit-bio" class="form-control" placeholder="Tell us about yourself" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-avatar">Profile Picture URL</label>
+                        <input type="url" id="edit-avatar" class="form-control" placeholder="https://example.com/your-image.jpg">
+                    </div>
+                    <button type="submit" class="profile-btn submit-btn">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/profile-modal.js"></script>
+<script src="js/orders-access.js"></script>`n    <script src="js/camera-modal.js"></script>
+    <script src="js/camera-access.js"></script>`n</body>
+</html>
+
+
+
+

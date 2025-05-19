@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games | OVRIN</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <link rel="stylesheet" href="css/header-enhanced.css">
+    <link rel="stylesheet" href="css/wishlist.css">
+    <link rel="stylesheet" href="css/category-themes.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <link rel="stylesheet" href="css/header-enhanced.css">
+    <style>
+        .subcategory-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            padding: 15px;
+        }
+        
+        .subcategory-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background-color: white;
+            border-radius: 12px;
+            padding: 15px 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid #e91e63;
+        }
+        
+        .subcategory-item:active {
+            transform: scale(0.95);
+        }
+        
+        .subcategory-icon {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        
+        .subcategory-icon i {
+            font-size: 12px;
+            color: #4caf50; /* Green color for icons */
+        }
+        
+        .subcategory-name {
+            font-size: 13px;
+            color: #9c27b0; /* Violet text for titles per user preference */
+            font-weight: 600;
+        }
+        
+        .back-button {
+            background: transparent;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            color: white;
+            display: flex;
+            align-items: center;
+        }
+        
+        .category-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: white;
+        }
+    </style>
+    <link rel="stylesheet" href="css/camera-modal.css">
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="container games-theme">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="header-top">
+                <button class="back-button" onclick="history.back()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 class="category-title">Games</h1>
+                <div class="header-actions">
+                    <div class="wishlist-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="notification">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-dot"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search in Games">
+                <i class="fas fa-camera filter-icon"></i>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Subcategory Grid -->
+            <div class="subcategory-grid">
+                <div class="subcategory-item" onclick="navigateToSubcategory('video-games')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <div class="subcategory-name">Video Games</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('board-games')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-chess-board"></i>
+                    </div>
+                    <div class="subcategory-name">Board Games</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('card-games')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-clone"></i>
+                    </div>
+                    <div class="subcategory-name">Card Games</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('puzzle-games')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-puzzle-piece"></i>
+                    </div>
+                    <div class="subcategory-name">Puzzle Games</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('outdoor-games')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-tree"></i>
+                    </div>
+                    <div class="subcategory-name">Outdoor Games</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('role-playing')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-dice-d20"></i>
+                    </div>
+                    <div class="subcategory-name">Role Playing</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('strategy')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-chess"></i>
+                    </div>
+                    <div class="subcategory-name">Strategy</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('children-games')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-child"></i>
+                    </div>
+                    <div class="subcategory-name">Children's Games</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('collectible')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="subcategory-name">Collectible</div>
+                </div>
+            </div>
+            
+            <!-- Featured Games Section -->
+            <div class="section-header">
+                <h2 class="section-title">Featured Games</h2>
+                <a href="#" class="view-all">View All</a>
+            </div>
+            
+            <!-- Product Grid for Featured Games -->
+            <div class="product-grid" id="featured-games">
+                <!-- Products will be dynamically added here -->
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="orders.html" class="nav-item active">
+                <i class="fas fa-clipboard-list"></i>
+                <span>My Orders</span>
+            </a>
+            <a href="cart.html" class="nav-item">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Cart</span>
+            </a>
+            <a href="#" class="nav-item" id="profile-nav">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <script src="js/profile-modal.js"></script>
+    <script src="js/product.js"></script>
+    <script>
+        // Function to initialize featured games
+        function initializeFeaturedGames() {
+            // Sample featured games
+            const featuredGames = [
+                {
+                    id: 2001, // Using numeric IDs like Electronics for consistency
+                    name: 'Monopoly Classic',
+                    price: 1499,
+                    rating: 4.7,
+                    image: 'https://images.unsplash.com/photo-1611371805429-12b7e38c0506?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+                    category: 'Games',
+                    status: 'Available',
+                    description: 'The classic property trading board game for the whole family.'
+                },
+                {
+                    id: 2002,
+                    name: 'Chess Set',
+                    price: 2499,
+                    rating: 4.9,
+                    image: 'https://images.unsplash.com/photo-1586165368502-1bad197a6461?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+                    category: 'Games',
+                    status: 'Available',
+                    description: 'Handcrafted wooden chess set with weighted pieces.'
+                },
+                {
+                    id: 2003,
+                    name: 'Jigsaw Puzzle',
+                    price: 899,
+                    rating: 4.4,
+                    image: 'https://images.unsplash.com/photo-1525434280327-e525e035c476?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+                    category: 'Games',
+                    status: 'Available',
+                    description: '1000 piece puzzle with beautiful landscape scenery.'
+                },
+                {
+                    id: 2004,
+                    name: 'Playing Cards',
+                    price: 599,
+                    rating: 4.6,
+                    image: 'https://images.unsplash.com/photo-1559323516-be8d89052637?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+                    category: 'Games',
+                    status: 'Available',
+                    description: 'Premium quality playing cards with elegant design.'
+                }
+            ];
+            
+            // Add the games to the global products array in localStorage
+            let allProducts = JSON.parse(localStorage.getItem('products')) || [];
+            
+            // Remove any existing Games products first to avoid duplicates
+            allProducts = allProducts.filter(p => p.category !== 'Games');
+            
+            // Add the new Games products
+            allProducts = [...allProducts, ...featuredGames];
+            
+            // Save back to localStorage
+            localStorage.setItem('products', JSON.stringify(allProducts));
+            console.log('Updated products with Games in localStorage');
+            
+            return featuredGames;
+        }
+
+        // Load products specific to Games
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the games products
+            initializeFeaturedGames();
+            
+            // Get all game products from localStorage (using the same approach as Electronics page)
+            const productsData = JSON.parse(localStorage.getItem('products')) || [];
+            const gamesProducts = productsData.filter(product => product.category === 'Games');
+            
+            // Display the games products in the featured section
+            const featuredContainer = document.getElementById('featured-games');
+            
+            if (featuredContainer && gamesProducts.length > 0) {
+                // If we have the product display function from product.js
+                if (typeof createProductCard === 'function') {
+                    gamesProducts.forEach(product => {
+                        const productCard = createProductCard(product);
+                        featuredContainer.appendChild(productCard);
+                    });
+                } else {
+                    // Fallback if createProductCard is not available
+                    featuredContainer.innerHTML = '<p>Games products coming soon!</p>';
+                }
+            }
+        });
+
+        function navigateToSubcategory(subcategory) {
+            console.log(`Navigating to ${subcategory}`);
+            alert(`Selected subcategory: ${subcategory}`);
+            // In a real implementation, you would navigate to a subcategory page
+            // window.location.href = `${subcategory}.html`;
+        }
+    </script>
+    <script src="js/main.js"></script>
+    <script src="js/product.js"></script>
+    <script src="js/profile-modal.js"></script>
+    <script src="js/orders-access.js"></script>
+    <script src="js/camera-modal.js"></script>
+    <script src="js/camera-access.js"></script>
+</body>
+</html>

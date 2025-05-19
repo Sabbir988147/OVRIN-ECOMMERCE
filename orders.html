@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders | OVRIN</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Orders Page Specific Styles */
+        .orders-container {
+            padding: 15px;
+        }
+        
+        .orders-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .order-card {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        
+        .order-header {
+            padding: 15px;
+            border-bottom: 1px solid #f5f5f5;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .order-id {
+            font-weight: 600;
+        }
+        
+        .order-date {
+            color: #888;
+            font-size: 14px;
+        }
+        
+        .order-status {
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-processing {
+            background-color: #e3f2fd;
+            color: #2196f3;
+        }
+        
+        .status-shipped {
+            background-color: #fff8e1;
+            color: #ffc107;
+        }
+        
+        .status-delivered {
+            background-color: #e8f5e9;
+            color: #4caf50;
+        }
+        
+        .order-items {
+            padding: 15px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        
+        .order-item {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        
+        .order-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .order-item-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        
+        .order-item-details {
+            flex: 1;
+            padding-left: 15px;
+        }
+        
+        .order-item-name {
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+        
+        .order-item-price {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .order-item-quantity {
+            color: #888;
+            font-size: 13px;
+        }
+        
+        .order-summary {
+            padding: 15px;
+        }
+        
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .order-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .order-action-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .track-order-btn {
+            background-color: #4caf50;
+            color: white;
+            margin-right: 8px;
+        }
+        
+        .review-order-btn {
+            background-color: #f5f5f5;
+            color: #333;
+            margin-left: 8px;
+        }
+        
+        .empty-orders {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .empty-orders i {
+            font-size: 60px;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .empty-orders h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .empty-orders p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .shop-now-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        /* Order Detail Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            border-radius: 15px;
+            margin: 50px auto;
+            max-width: 500px;
+            width: 90%;
+            animation: modalSlideUp 0.3s ease;
+        }
+        
+        @keyframes modalSlideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        
+        .modal-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            padding: 15px;
+        }
+    </style>
+    <link rel="stylesheet" href="css/camera-modal.css">`n</head>
+<body>
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header" style="padding-bottom: 10px;">
+            <div class="header-top">
+                <button class="back-button" onclick="history.back()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 class="title" style="font-size: 20px;">My Orders</h1>
+                <div class="notification">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-dot"></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="orders-container" id="orders-container">
+                <!-- Orders will be loaded dynamically here -->
+            </div>
+        </main>
+
+        <!-- Order Detail Modal -->
+        <div class="modal" id="order-detail-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Order Details</h2>
+                    <button class="close-modal" id="close-modal">&times;</button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                    <!-- Order details will be loaded dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-search"></i>
+                <span>Search</span>
+            </a>
+            <a href="cart.html" class="nav-item">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Cart</span>
+            </a>
+            <a href="profile.html" class="nav-item active">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/orders.js"></script>
+<script src="js/orders-access.js"></script>`n    <script src="js/camera-modal.js"></script>
+    <script src="js/camera-access.js"></script>`n</body>
+</html>
+
+
+
+

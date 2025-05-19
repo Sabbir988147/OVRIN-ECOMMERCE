@@ -1,0 +1,14 @@
+{
+  "name": "ovrin-ecommerce",
+  "version": "1.0.0",
+  "description": "OVRIN E-commerce Platform with Frontend and Backend",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "nodemon server/server.js",
+    "build": "cd server && npm install"
+  },
+  "engines": {
+    "node": "16.x"
+  }
+}

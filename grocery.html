@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grocery | OVRIN</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <link rel="stylesheet" href="css/header-enhanced.css">
+    <link rel="stylesheet" href="css/wishlist.css">
+    <link rel="stylesheet" href="css/category-themes.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <style>
+        .subcategory-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            padding: 15px;
+        }
+        
+        .subcategory-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background-color: white;
+            border-radius: 12px;
+            padding: 15px 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid #e91e63;
+        }
+        
+        .subcategory-item:active {
+            transform: scale(0.95);
+        }
+        
+        .subcategory-icon {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        
+        .subcategory-icon i {
+            font-size: 12px;
+            color: #4caf50; /* Green color for icons */
+        }
+        
+        .subcategory-name {
+            font-size: 13px;
+            color: #9c27b0; /* Violet text for titles per user preference */
+            font-weight: 600;
+        }
+        
+        .back-button {
+            background: transparent;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            color: white;
+            display: flex;
+            align-items: center;
+        }
+        
+        .category-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .product-description {
+            color: #4caf50; /* Green color for descriptions per user preference */
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        /* Product card styling to match user preferences */
+        .product-card {
+            width: 180px;
+            height: 430px;
+            border: 2px solid #e91e63;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-title {
+            color: #9c27b0;
+            font-weight: bold;
+        }
+
+        .product-info {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .availability {
+            color: #4caf50;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+    </style>
+    <link rel="stylesheet" href="css/camera-modal.css">
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="container grocery-theme">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="header-top">
+                <button class="back-button" onclick="history.back()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 class="category-title">Grocery</h1>
+                <div class="header-actions">
+                    <div class="wishlist-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="notification">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-dot"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search in Grocery">
+                <i class="fas fa-camera filter-icon"></i>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Subcategory Grid -->
+            <div class="subcategory-grid">
+                <div class="subcategory-item" onclick="navigateToSubcategory('fruits-vegetables')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-apple-alt"></i>
+                    </div>
+                    <div class="subcategory-name">Fruits & Vegetables</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('dairy')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-cheese"></i>
+                    </div>
+                    <div class="subcategory-name">Dairy & Eggs</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('meat')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-drumstick-bite"></i>
+                    </div>
+                    <div class="subcategory-name">Meat & Seafood</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('bakery')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-bread-slice"></i>
+                    </div>
+                    <div class="subcategory-name">Bakery</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('beverages')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-coffee"></i>
+                    </div>
+                    <div class="subcategory-name">Beverages</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('snacks')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-cookie"></i>
+                    </div>
+                    <div class="subcategory-name">Snacks</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('pantry')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-shopping-basket"></i>
+                    </div>
+                    <div class="subcategory-name">Pantry Staples</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('organic')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <div class="subcategory-name">Organic</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('frozen')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-snowflake"></i>
+                    </div>
+                    <div class="subcategory-name">Frozen Foods</div>
+                </div>
+            </div>
+            
+            <!-- Featured Grocery Products Section -->
+            <div class="section-header">
+                <h2 class="section-title">Featured Grocery Products</h2>
+                <a href="#" class="view-all">View All</a>
+            </div>
+            
+            <!-- Product Grid for Featured Grocery Products -->
+            <div class="product-grid" id="featured-grocery">
+                <!-- Products will be dynamically added here -->
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="orders.html" class="nav-item active">
+                <i class="fas fa-clipboard-list"></i>
+                <span>My Orders</span>
+            </a>
+            <a href="cart.html" class="nav-item">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Cart</span>
+            </a>
+            <a href="#" class="nav-item" id="profile-nav">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <script src="js/profile-modal.js"></script>
+    <script src="js/product.js"></script>
+    <script>
+        // Function to initialize featured grocery products
+        function initializeFeaturedGrocery() {
+            // Sample featured grocery products
+            const featuredGrocery = [
+                {
+                    id: 5001, // Using numeric IDs like Electronics for consistency
+                    name: 'Organic Fruit Basket',
+                    price: 2199,
+                    rating: 4.8,
+                    image: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+                    category: 'Grocery',
+                    status: 'Available',
+                    description: 'Fresh seasonal assortment of organic fruits.'
+                },
+                {
+                    id: 5002,
+                    name: 'Premium Coffee Beans',
+                    price: 1499,
+                    rating: 4.7,
+                    image: 'https://images.unsplash.com/photo-1583106577953-89e0eea1b58f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+                    category: 'Grocery',
+                    status: 'Available',
+                    description: 'Specialty dark roast coffee beans from premium sources.'
+                },
+                {
+                    id: 5003,
+                    name: 'Artisanal Honey',
+                    price: 899,
+                    rating: 4.6,
+                    image: 'https://images.unsplash.com/photo-1632391742942-a943d84ba4b3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+                    category: 'Grocery',
+                    status: 'Available',
+                    description: 'Pure wildflower honey harvested from local apiaries.'
+                },
+                {
+                    id: 5004,
+                    name: 'Imported Olive Oil',
+                    price: 1699,
+                    rating: 4.9,
+                    image: 'https://images.unsplash.com/photo-1622040806062-27ae4deb4a40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+                    category: 'Grocery',
+                    status: 'Available',
+                    description: 'Extra virgin olive oil imported from Mediterranean groves.'
+                }
+            ];
+            
+            // Add the grocery products to the global products array in localStorage
+            let allProducts = JSON.parse(localStorage.getItem('products')) || [];
+            
+            // Remove any existing Grocery products first to avoid duplicates
+            allProducts = allProducts.filter(p => p.category !== 'Grocery');
+            
+            // Add the new Grocery products
+            allProducts = [...allProducts, ...featuredGrocery];
+            
+            // Save back to localStorage
+            localStorage.setItem('products', JSON.stringify(allProducts));
+            console.log('Updated products with Grocery items in localStorage');
+            
+            return featuredGrocery;
+        }
+
+        // Load products specific to Grocery
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the grocery products
+            initializeFeaturedGrocery();
+            
+            // Get all grocery products from localStorage (using the same approach as Electronics page)
+            const productsData = JSON.parse(localStorage.getItem('products')) || [];
+            const groceryProducts = productsData.filter(product => product.category === 'Grocery');
+            
+            // Display the grocery products in the featured section
+            const featuredContainer = document.getElementById('featured-grocery');
+            
+            if (featuredContainer && groceryProducts.length > 0) {
+                // If we have the product display function from product.js
+                if (typeof createProductCard === 'function') {
+                    groceryProducts.forEach(product => {
+                        const productCard = createProductCard(product);
+                        featuredContainer.appendChild(productCard);
+                    });
+                } else {
+                    // Fallback if createProductCard is not available
+                    featuredContainer.innerHTML = '<p>Grocery products coming soon!</p>';
+                }
+            }
+        });
+
+        function navigateToSubcategory(subcategory) {
+            console.log(`Navigating to ${subcategory}`);
+            alert(`Selected subcategory: ${subcategory}`);
+            // In a real implementation, you would navigate to a subcategory page
+            // window.location.href = `${subcategory}.html`;
+        }
+    </script>
+<script src="js/orders-access.js"></script>
+    <script src="js/camera-modal.js"></script>
+    <script src="js/camera-access.js"></script>
+</body>
+</html>
+
+
+
+

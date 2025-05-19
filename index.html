@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#E61E4D">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>OVRIN | Mobile Shopping</title>
+    <!-- Preload critical assets -->
+    <link rel="preload" href="css/style.css" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" as="style">
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
+    <!-- Load critical CSS first -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Load fonts with display=swap for better performance -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    
+    <!-- Font Awesome optimized to only load what's needed -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    
+    <!-- Non-critical CSS loaded with low priority -->
+    <link rel="stylesheet" href="css/toast.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="css/wishlist.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="css/banner.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="css/category-enhanced.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="css/category-view.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="css/header-enhanced.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="css/camera-modal.css" media="print" onload="this.media='all'">
+    
+    <!-- Fallback for browsers that don't support onload -->
+    <noscript>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="stylesheet" href="css/toast.css">
+        <link rel="stylesheet" href="css/wishlist.css">
+        <link rel="stylesheet" href="css/banner.css">
+        <link rel="stylesheet" href="css/category-enhanced.css">
+        <link rel="stylesheet" href="css/category-view.css">
+        <link rel="stylesheet" href="css/header-enhanced.css">
+        <link rel="stylesheet" href="css/camera-modal.css">
+    </noscript>
+    <style>
+        /* Time spent display styles */
+        .time-spent {
+            display: flex;
+            align-items: center;
+            background-color: rgba(230, 30, 77, 0.15);
+            border-radius: 20px;
+            padding: 5px 10px;
+            color: #212121;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+        
+        .time-spent i {
+            margin-right: 5px;
+            font-size: 10px;
+            color: #E61E4D;
+        }
+        
+        #time-spent-display {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="header-top">
+                <div class="logo-container">
+                    <i class="fas fa-shopping-bag brand-icon"></i>
+                    <h1 class="title">OVRIN</h1>
+                </div>
+                <div class="time-spent">
+                    <i class="fas fa-clock"></i>
+                    <span id="time-spent-display">00:00:00</span>
+                </div>
+                <div class="header-actions">
+                    <div class="wishlist-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="notification">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-dot"></span>
+                    </div>
+                </div>
+            </div>
+            <p class="welcome-text">Hello, <span class="user-name">Guest</span> 👋</p>
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search for products, brands & more">
+                <i class="fas fa-camera filter-icon"></i>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Swipeable Banners -->
+            <div class="swipeable-banner-container">
+                <!-- Banner controls -->
+                <div class="banner-controls">
+                    <div class="banner-control prev">
+                        <i class="fas fa-chevron-left"></i>
+                    </div>
+                    <div class="banner-control next">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+                
+                <div class="swipeable-banner-wrapper" id="banner-wrapper">
+                    <!-- Banner 1 -->
+                    <div class="swipeable-banner active">
+                        <div class="banner-content">
+                            <div class="banner-text">
+                                <span class="banner-badge">New Arrival</span>
+                                <h2>iPhone 14 Pro</h2>
+                                <p>Powerful camera, stunning display</p>
+                                <button class="buy-button">Shop Now <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                            <div class="banner-image">
+                                <img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="New Smartphone">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Banner 2 -->
+                    <div class="swipeable-banner">
+                        <div class="banner-content">
+                            <div class="banner-text">
+                                <span class="banner-badge">Limited Edition</span>
+                                <h2>Smart Watch S7</h2>
+                                <p>Track fitness & stay connected</p>
+                                <button class="buy-button">Shop Now <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                            <div class="banner-image">
+                                <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Smart Watch">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Banner 3 -->
+                    <div class="swipeable-banner">
+                        <div class="banner-content">
+                            <div class="banner-text">
+                                <span class="banner-badge">Top Seller</span>
+                                <h2>Wireless Earbuds</h2>
+                                <p>Crystal clear sound quality</p>
+                                <button class="buy-button">Shop Now <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                            <div class="banner-image">
+                                <img src="https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Wireless Earbuds">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Banner 4 -->
+                    <div class="swipeable-banner">
+                        <div class="banner-content">
+                            <div class="banner-text">
+                                <span class="banner-badge">Best Value</span>
+                                <h2>4K Smart TV</h2>
+                                <p>Immersive viewing experience</p>
+                                <button class="buy-button">Shop Now <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                            <div class="banner-image">
+                                <img src="https://images.unsplash.com/photo-1593305841991-05c297ba4575?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Smart TV">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Banner 5 -->
+                    <div class="swipeable-banner">
+                        <div class="banner-content">
+                            <div class="banner-text">
+                                <span class="banner-badge">New Season</span>
+                                <h2>Stylish Jackets</h2>
+                                <p>Premium quality & comfort</p>
+                                <button class="buy-button">Shop Now <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                            <div class="banner-image">
+                                <img src="https://images.unsplash.com/photo-1576995853123-5a10305d93c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Stylish Jacket">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Banner 6 -->
+                    <div class="swipeable-banner">
+                        <div class="banner-content">
+                            <div class="banner-text">
+                                <span class="banner-badge">Flash Deal</span>
+                                <h2>Gaming Console</h2>
+                                <p>Next-gen gaming experience</p>
+                                <button class="buy-button">Shop Now <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                            <div class="banner-image">
+                                <img src="https://images.unsplash.com/photo-1605901309584-818e25960a8f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Gaming Console">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Banner Navigation Dots -->
+                <div class="banner-dots" id="banner-dots">
+                    <span class="dot active" data-index="0"></span>
+                    <span class="dot" data-index="1"></span>
+                    <span class="dot" data-index="2"></span>
+                    <span class="dot" data-index="3"></span>
+                    <span class="dot" data-index="4"></span>
+                    <span class="dot" data-index="5"></span>
+                </div>
+            </div>
+
+            <!-- Enhanced Categories Section -->
+            <div class="category-container">
+                <div class="section-header">
+                    <h2 class="section-title">Categories</h2>
+                    <a href="#" class="view-all" id="view-all-categories">View All</a>
+                </div>
+            
+            <!-- Enhanced Category Icons -->
+            <div class="category-icons collapsed">
+                <a href="electronics.html" class="category-icon-item">
+                    <div class="category-icon electronics">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <span>Electronics</span>
+                    <div class="category-highlight"></div>
+                </a>
+                <a href="fashion.html" class="category-icon-item">
+                    <div class="category-icon fashion">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                    <span>Fashion</span>
+                    <div class="category-highlight"></div>
+                </a>
+                <a href="beauty.html" class="category-icon-item">
+                    <div class="category-icon beauty">
+                        <i class="fas fa-spa"></i>
+                    </div>
+                    <span>Beauty</span>
+                    <div class="category-highlight"></div>
+                </a>
+                <a href="home.html" class="category-icon-item">
+                    <div class="category-icon home">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <span>Home</span>
+                    <div class="category-highlight"></div>
+                </a>
+                <a href="toys.html" class="category-icon-item">
+                    <div class="category-icon toys">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <span>Toys</span>
+                    <div class="category-highlight"></div>
+                </a>
+                <a href="books.html" class="category-icon-item">
+                    <div class="category-icon books">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <span>Books</span>
+                    <div class="category-highlight"></div>
+                </a>
+                <a href="games.html" class="category-icon-item">
+                    <div class="category-icon games">
+                        <i class="fas fa-dice"></i>
+                    </div>
+                    <span>Games</span>
+                    <div class="category-highlight"></div>
+                </a>
+                <a href="sports.html" class="category-icon-item">
+                    <div class="category-icon sports">
+                        <i class="fas fa-basketball-ball"></i>
+                    </div>
+                    <span>Sports</span>
+                    <div class="category-highlight"></div>
+                </a>
+                <a href="health.html" class="category-icon-item">
+                    <div class="category-icon health">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <span>Health</span>
+                    <div class="category-highlight"></div>
+                </a>
+                <a href="grocery.html" class="category-icon-item">
+                    <div class="category-icon grocery">
+                        <i class="fas fa-shopping-basket"></i>
+                    </div>
+                    <span>Grocery</span>
+                    <div class="category-highlight"></div>
+                </a>
+            </div>
+            </div> <!-- closing category-container -->
+            
+            <!-- Filter Tabs -->
+            <div class="category-filters">
+                <button class="filter-button active">All</button>
+                <button class="filter-button">Popular</button>
+                <button class="filter-button">New Arrival</button>
+                <button class="filter-button">Featured</button>
+                <button class="filter-button">Sale</button>
+            </div>
+
+            <!-- Popular Products Section -->
+            <div class="section-header">
+                <h2 class="section-title">Popular Products</h2>
+                <a href="#" class="view-all">View All</a>
+            </div>
+            
+            <!-- Product Grid -->
+            <div class="product-grid" id="product-container">
+                <!-- Products will be dynamically added here -->
+            </div>
+            
+            <!-- Featured Brands -->
+            <div class="featured-brands-section">
+                <div class="section-header">
+                    <h2 class="section-title">Featured Brands<span class="featured-badge">Top Picks</span></h2>
+                    <a href="#" class="view-all">View All</a>
+                </div>
+                
+                <!-- Brand Logos -->
+                <div class="brand-logos">
+                    <div class="brand-logo">
+                        <div class="brand-image">
+                            <i class="fab fa-apple"></i>
+                        </div>
+                        <div class="brand-name">Apple</div>
+                        <div class="brand-discount">10%</div>
+                        <div class="brand-category-tag">Tech</div>
+                    </div>
+                    <div class="brand-logo">
+                        <div class="brand-image">
+                            <i class="fab fa-samsung"></i>
+                        </div>
+                        <div class="brand-name">Samsung</div>
+                        <div class="brand-discount">15%</div>
+                        <div class="brand-category-tag">Tech</div>
+                    </div>
+                    <div class="brand-logo">
+                        <div class="brand-image">
+                            <i class="fab fa-amazon"></i>
+                        </div>
+                        <div class="brand-name">Amazon</div>
+                        <div class="brand-discount">8%</div>
+                        <div class="brand-category-tag">Shopping</div>
+                    </div>
+                    <div class="brand-logo">
+                        <div class="brand-image">
+                            <i class="fab fa-android"></i>
+                        </div>
+                        <div class="brand-name">Android</div>
+                        <div class="brand-discount">12%</div>
+                        <div class="brand-category-tag">Tech</div>
+                    </div>
+                    <div class="brand-logo">
+                        <div class="brand-image">
+                            <i class="fas fa-tshirt"></i>
+                        </div>
+                        <div class="brand-name">Nike</div>
+                        <div class="brand-discount">20%</div>
+                        <div class="brand-category-tag">Fashion</div>
+                    </div>
+                    <div class="brand-logo">
+                        <div class="brand-image">
+                            <i class="fas fa-running"></i>
+                        </div>
+                        <div class="brand-name">Puma</div>
+                        <div class="brand-discount">18%</div>
+                        <div class="brand-category-tag">Sports</div>
+                    </div>
+                </div>
+                
+                <!-- Brand Controls -->
+                <div class="brands-carousel-controls">
+                    <div class="brand-control prev">
+                        <i class="fas fa-chevron-left"></i>
+                    </div>
+                    <div class="brand-control next">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="orders.html" class="nav-item">
+                <i class="fas fa-clipboard-list"></i>
+                <span>My Orders</span>
+            </a>
+            <a href="cart.html" class="nav-item">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Cart</span>
+            </a>
+            <a href="#" class="nav-item" id="profile-nav">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Profile Modal -->    
+    <div id="profile-modal" class="profile-modal hidden">
+        <div class="profile-modal-content">
+            <!-- Initial State: Login/Register -->            
+            <div id="auth-section" class="profile-section">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Welcome to OVRIN</h2>
+                    </div>
+                    <span class="close-profile">&times;</span>
+                </div>
+                <div class="auth-buttons-container">
+                    <div class="auth-button-wrapper">
+                        <button id="register-btn" class="profile-btn register-btn">Register</button>
+                        <p class="auth-subtext">(New to OVRIN?)</p>
+                    </div>
+                    <div class="auth-button-wrapper">
+                        <button id="login-btn" class="profile-btn login-btn">Login</button>
+                        <p class="auth-subtext">Existing users</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Registration Form -->
+            <div id="register-section" class="profile-section hidden">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Create Account</h2>
+                    </div>
+                    <span class="back-to-auth">&larr;</span>
+                    <span class="close-profile">&times;</span>
+                </div>
+                <form id="register-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="register-name">Full Name</label>
+                        <input type="text" id="register-name" class="form-control" placeholder="John Smith" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email Address</label>
+                        <input type="email" id="register-email" class="form-control" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Password</label>
+                        <input type="password" id="register-password" class="form-control" placeholder="Minimum 6 characters" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm Password</label>
+                        <input type="password" id="confirm-password" class="form-control" placeholder="Re-enter your password" required>
+                    </div>
+                    <button type="submit" class="profile-btn submit-btn">Create Account</button>
+                    <div class="form-footer">
+                        <p class="terms">By signing up, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a></p>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="login-section" class="profile-section hidden">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Login</h2>
+                    </div>
+                    <span class="back-to-auth">&larr;</span>
+                    <span class="close-profile">&times;</span>
+                </div>
+                <form id="login-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" class="form-control" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" class="form-control" placeholder="********" required>
+                    </div>
+                    <button type="submit" class="profile-btn submit-btn">Login</button>
+                    <div class="form-footer">
+                        <a href="#" class="forgot-password">Forgot Password?</a>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- User Profile Section (After Login) -->
+            <div id="user-profile-section" class="profile-section hidden">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Profile</h2>
+                    </div>
+                    <span class="settings-icon"><i class="fas fa-cog"></i></span>
+                    <span class="close-profile">&times;</span>
+                </div>
+                
+                <!-- User Info Card -->
+                <div class="user-info-card">
+                    <div class="profile-avatar" id="profile-avatar-container">
+                        <img id="profile-image" src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Profile Photo">
+                        <div class="avatar-overlay">
+                            <i class="fas fa-camera"></i>
+                            <span>Change Photo</span>
+                        </div>
+                        <input type="file" id="profile-image-input" accept="image/*" capture="user" class="hidden">
+                    </div>
+                    <h3 id="profile-name" class="user-name">John Doe</h3>
+                    <p id="profile-bio" class="user-bio">Happy Shopper | Member since 2025</p>
+                    <button id="edit-profile-btn" class="profile-btn">Edit Profile</button>
+                </div>
+                
+                <!-- Account Overview Menu -->
+                <div class="account-menu">
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <span class="menu-item-text">My Orders</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <span class="menu-item-text">Wishlist</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <span class="menu-item-text">Payment Methods</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <span class="menu-item-text">Addresses</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-tag"></i>
+                            </div>
+                            <span class="menu-item-text">Coupons & Rewards</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-question-circle"></i>
+                            </div>
+                            <span class="menu-item-text">Support & Help Center</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Section -->
+                <div class="settings-section">
+                    <h3 class="section-title">Settings</h3>
+                    
+                    <div class="setting-item">
+                        <div class="setting-name">Dark Mode</div>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="dark-mode-toggle">
+                            <label for="dark-mode-toggle"></label>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-name">Notifications</div>
+                        <div class="setting-action">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-name">Privacy & Security</div>
+                        <div class="setting-action">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <button id="logout-btn" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- My Orders Section -->
+            <div id="my-orders-section" class="profile-section hidden">
+                <div class="profile-header" style="background-color: #4caf50;">
+                    <div class="welcome-header">
+                        <h2>My Orders</h2>
+                    </div>
+                    <span class="back-to-profile">&larr;</span>
+                    <span class="close-profile">&times;</span>
+                </div>
+                <div class="profile-orders-container" id="profile-orders-container">
+                    <!-- Orders will be loaded dynamically here -->
+                </div>
+            </div>
+            
+            <!-- Edit Profile Section -->
+            <div id="edit-profile-section" class="profile-section hidden">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Edit Profile</h2>
+                    </div>
+                    <span class="back-to-profile">&larr;</span>
+                    <span class="close-profile">&times;</span>
+                </div>
+                <form id="edit-profile-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="edit-name">Full Name</label>
+                        <input type="text" id="edit-name" class="form-control" placeholder="Your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-email">Email Address</label>
+                        <input type="email" id="edit-email" class="form-control" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-bio">Bio</label>
+                        <textarea id="edit-bio" class="form-control" placeholder="Tell us about yourself" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-avatar">Profile Picture URL</label>
+                        <input type="url" id="edit-avatar" class="form-control" placeholder="https://example.com/your-image.jpg">
+                    </div>
+                    <button type="submit" class="profile-btn submit-btn">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance optimization: Load only what's needed immediately -->
+    <script>
+        // Initialize Razorpay key - Important for payment processing
+        window.razorpayKeyId = 'rzp_live_noQkGPNMtSUWtP';
+        
+        // Performance Monitoring
+        window.addEventListener('load', function() {
+            // Report key performance metrics
+            setTimeout(function() {
+                if(window.performance && window.performance.timing) {
+                    const timing = window.performance.timing;
+                    const pageLoadTime = timing.loadEventEnd - timing.navigationStart;
+                    console.log('Page loaded in:', pageLoadTime + 'ms');
+                    
+                    // Report to analytics if too slow (over 3 seconds)
+                    if(pageLoadTime > 3000) {
+                        // Function to report slow loading would go here
+                        console.warn('Page load performance issue detected');
+                    }
+                }
+            }, 0);
+        });
+    </script>
+    
+    <!-- Core scripts loaded with high priority -->
+    <script src="js/main.js" defer></script>
+    
+    <!-- Critical for page functionality -->
+    <script src="js/product.js" defer></script>
+    <script src="js/category.js" defer></script>
+    <script src="js/image-optimizer.js" defer></script>
+    
+    <!-- Backend API Integration -->
+    <script src="js/api-service.js" defer></script>
+    <script src="js/api-integration.js" defer></script>
+    
+    <!-- Non-critical library scripts loaded asynchronously -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" async></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" async></script>
+    
+    <!-- Load remaining features with lower priority -->
+    <script src="js/banner-carousel.js" defer></script>
+    <script src="js/time-greeting.js" defer></script>
+    <script src="js/profile-modal.js" defer></script>
+    <script src="js/category-view.js" defer></script>
+    <script src="js/wishlist.js" defer></script>
+    <script src="js/orders-access.js" defer></script>
+    <script src="js/camera-modal.js" defer></script>
+    <script src="js/time-tracker.js" defer></script>
+    
+    <!-- Direct script to ensure username is updated immediately -->
+    <script>
+        // Immediate execution to update username
+        document.addEventListener('DOMContentLoaded', function() {
+            const userNameElement = document.querySelector('.user-name');
+            if (userNameElement) {
+                // Get name from all possible storage locations
+                const sessionName = sessionStorage.getItem('userName');
+                const localName = localStorage.getItem('userName');
+                const profileObj = JSON.parse(localStorage.getItem('userProfile'));
+                
+                // Use the first available name
+                const userName = sessionName || localName || (profileObj && profileObj.name);
+                
+                if (userName) {
+                    userNameElement.textContent = userName;
+                    console.log('Username updated to:', userName);
+                }
+            }
+        });
+    </script>
+    <script src="js/camera-access.js"></script>
+</body>
+</html>
+
+

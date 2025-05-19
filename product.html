@@ -1,0 +1,2302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details | OVRIN</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/profile-modal.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <link rel="stylesheet" href="css/wishlist.css">
+    <style>
+        /* Time spent display styles */
+        .time-spent {
+            display: flex;
+            align-items: center;
+            background-color: rgba(230, 30, 77, 0.15);
+            border-radius: 20px;
+            padding: 5px 10px;
+            color: #212121;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+        
+        .time-spent i {
+            margin-right: 5px;
+            font-size: 10px;
+            color: #E61E4D;
+        }
+        
+        #time-spent-display {
+            font-weight: 600;
+        }
+    </style>
+    <style>
+        /* Product Detail Specific Styles */
+        .product-detail {
+            padding: 15px;
+        }
+        
+        /* Product Image Slider */
+        .product-image-slider {
+            position: relative;
+            width: 100%;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        /* 360 Degree Viewer Styles */
+        .viewer-360-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1/1;
+            border-radius: 15px;
+            background: #f5f5f5;
+            overflow: hidden;
+            margin: 15px 0;
+            border: 2px solid #e91e63; /* Magenta border per user preference */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            cursor: grab;
+        }
+        
+        .viewer-360-frame {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s ease;
+        }
+        
+        .viewer-360-image {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+        
+        .viewer-360-loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 2;
+        }
+        
+        .loader-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(76, 175, 80, 0.3);
+            border-top: 4px solid #4caf50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loader-text {
+            color: #9c27b0; /* Violet color per user preference */
+            font-weight: 600;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .viewer-360-controls {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            z-index: 3;
+        }
+        
+        .viewer-360-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #e91e63; /* Magenta border */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .viewer-360-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .viewer-360-btn i {
+            color: #9c27b0; /* Violet color */
+            font-size: 16px;
+        }
+        
+        .viewer-360-btn.active {
+            background: #4caf50; /* Green color when active */
+        }
+        
+        .viewer-360-btn.active i {
+            color: white;
+        }
+        
+        .viewer-360-instruction {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 25px;
+            border-radius: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+        
+        .instruction-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #4caf50; /* Green color */
+        }
+        
+        .instruction-text {
+            font-weight: 600;
+            color: #9c27b0; /* Violet color */
+        }
+        
+        /* 360 Viewer Button */
+        .viewer-360-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px auto;
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #e91e63; /* Magenta border */
+            border-radius: 25px;
+            color: #9c27b0; /* Violet text */
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            gap: 8px;
+        }
+        
+        .viewer-360-toggle:hover {
+            background: #f5f5f5;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .viewer-360-toggle i {
+            color: #4caf50; /* Green icon */
+            animation: rotate360 4s linear infinite;
+        }
+        
+        @keyframes rotate360 {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .main-image-container {
+            width: 100%;
+            aspect-ratio: 1/1;
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+        }
+        
+        .product-detail-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+            border-radius: 15px;
+        }
+        
+        .product-detail-image.active {
+            display: block;
+        }
+        
+        .thumbnail-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding: 5px 0;
+            justify-content: center;
+        }
+        
+        .thumbnail-container::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .image-thumbnail {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .image-thumbnail.active {
+            border-color: #4caf50;
+        }
+        
+        .slider-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 5;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .slider-prev {
+            left: 10px;
+        }
+        
+        .slider-next {
+            right: 10px;
+        }
+        
+        .product-detail-info {
+            margin-bottom: 20px;
+        }
+        
+        .product-detail-price {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .product-detail-rating {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .product-detail-rating i {
+            color: #ffc107;
+            margin-right: 2px;
+        }
+        
+        .rating-count {
+            color: #666;
+            font-size: 14px;
+            margin-left: 5px;
+        }
+        
+        .product-description {
+            line-height: 1.6;
+            margin: 15px 0 25px;
+            color: #333; /* Darker color for better readability */
+            font-weight: 700; /* Bold text matching home page */
+            font-size: 14px; /* Increased font size */
+            background-color: rgba(240, 240, 240, 0.5); /* Light background for contrast */
+            padding: 12px 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4caf50; /* Green accent border */
+        }
+        
+        .product-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            overflow: hidden;
+        }
+        
+        .quantity-btn {
+            border: none;
+            background: #f5f5f5;
+            width: 40px;
+            height: 40px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        .quantity-input {
+            width: 40px;
+            height: 40px;
+            border: none;
+            text-align: center;
+            font-size: 16px;
+        }
+        
+        .add-to-cart-btn, .buy-now-btn {
+            flex: 1;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            height: 45px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            min-width: 130px;
+        }
+        
+        .add-to-cart-btn {
+            background-color: #4caf50;
+        }
+        
+        .buy-now-btn {
+            background-color: #ff9800;
+        }
+        
+        .back-button {
+            background: transparent;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 25px 0 15px;
+        }
+        
+        .similar-products {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+            padding: 0 15px 15px;
+            overflow-x: hidden;
+            scrollbar-width: none;
+        }
+        
+        .similar-products::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .similar-product-card {
+            min-width: 180px;
+            height: 320px; /* Reduced height */
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border: 2px solid #e91e63; /* Pink/magenta border */
+            display: flex;
+            flex-direction: column;
+            margin-right: 8px;
+            background-color: white;
+            cursor: pointer;
+        }
+        
+        .similar-product-img {
+            width: 100%;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+        }
+        
+        .similar-product-info {
+            padding: 10px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .similar-product-name {
+            font-size: 14px;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .similar-product-price {
+            font-weight: 700;
+            font-size: 16px;
+            color: #e91e63;
+            margin-bottom: 6px;
+        }
+        
+        .similar-product-discount {
+            font-size: 12px;
+            color: #4caf50;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .similar-product-rating {
+            display: flex;
+            align-items: center;
+            margin-top: 5px;
+        }
+        
+        .similar-product-rating .rating-stars {
+            color: #ff9800;
+            margin-right: 5px;
+            font-size: 12px;
+        }
+        
+        .similar-product-rating .rating-count {
+            font-size: 11px;
+            color: #757575;
+        }
+        
+        .notification-popup {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            z-index: 1000;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        
+        /* Promotional Info Styles */
+        .promotional-info {
+            margin: 15px 0;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .promo-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .promo-item:last-child {
+            border-bottom: none;
+        }
+        
+        .promo-icon {
+            width: 32px;
+            display: flex;
+            justify-content: center;
+            margin-right: 15px;
+            color: #4caf50;
+        }
+        
+        .promo-text {
+            flex: 1;
+        }
+        
+        .promo-title {
+            display: flex;
+            align-items: center;
+        }
+        
+        .promo-free {
+            color: #4caf50;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        
+        .promo-countdown {
+            color: #e91e63;
+            font-weight: 600;
+        }
+        
+        .promo-arrow {
+            color: #4caf50;
+        }
+        
+        .wow-deal {
+            display: flex;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            align-items: center;
+        }
+        
+        .wow-label {
+            font-weight: bold;
+            color: #3f51b5;
+            font-size: 16px;
+            margin-right: 15px;
+        }
+        
+        .wow-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4caf50;
+            margin-right: auto;
+        }
+        
+        .wow-details {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        /* Delivery Modal Styles */
+        .delivery-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 2000;
+            display: none;
+        }
+        
+        .delivery-modal.active {
+            display: block;
+        }
+        
+        .delivery-modal-content {
+            position: relative;
+            max-width: 600px;
+            width: 100%;
+            margin: 50px auto 0;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .delivery-header {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: #4caf50;
+            color: white;
+        }
+        
+        .delivery-close {
+            font-size: 24px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+        
+        .delivery-title {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        .delivery-body {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .delivery-section {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .delivery-section-title {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .delivery-info {
+            margin-bottom: 5px;
+        }
+        
+        .delivery-days {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 5px 0;
+        }
+        
+        .delivery-note {
+            font-size: 14px;
+            color: #555;
+        }
+        
+        /* Return Policy Modal Styles */
+        .return-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 2000;
+            display: none;
+        }
+        
+        .return-modal.active {
+            display: block;
+        }
+        
+        .return-modal-content {
+            position: relative;
+            max-width: 600px;
+            width: 100%;
+            margin: 50px auto 0;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .return-header {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: #4caf50;
+            color: white;
+        }
+        
+        .return-close {
+            font-size: 24px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+        
+        .return-title {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        .return-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 15px;
+        }
+        
+        .return-options {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+        
+        .return-option {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .return-option-icon {
+            width: 50px;
+            height: 50px;
+            background-color: #e3f2fd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            color: #4caf50;
+        }
+        
+        .return-section {
+            margin: 20px 0;
+        }
+        
+        .return-section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .return-condition {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .return-check {
+            color: #4caf50;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        .return-step {
+            display: flex;
+            margin-bottom: 15px;
+            align-items: flex-start;
+        }
+        
+        .return-step-number {
+            width: 24px;
+            height: 24px;
+            background-color: #4caf50;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            margin-right: 10px;
+            margin-top: 2px;
+        }
+        
+        .return-step-content {
+            flex: 1;
+        }
+        
+        .return-step-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .return-step-detail {
+            color: #666;
+            margin-left: 15px;
+            position: relative;
+            padding-left: 15px;
+        }
+        
+        .return-step-detail:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+        }
+        
+        .return-note {
+            display: flex;
+            align-items: flex-start;
+            font-size: 14px;
+            color: #f44336;
+            padding: 15px 0;
+            border-top: 1px solid #eee;
+        }
+        
+        .return-note i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        /* Payment Options Modal Styles */
+        .payment-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 2000;
+            display: none;
+        }
+        
+        .payment-modal.active {
+            display: block;
+        }
+        
+        .payment-modal-content {
+            position: relative;
+            max-width: 600px;
+            width: 100%;
+            margin: 50px auto 0;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .payment-header {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: #4caf50;
+            color: white;
+        }
+        
+        .payment-close {
+            font-size: 24px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+        
+        .payment-title {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        .payment-body {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .payment-tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .payment-tab {
+            flex: 1;
+            padding: 15px 0;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .payment-tab.active {
+            color: #4caf50;
+            border-bottom: 2px solid #4caf50;
+        }
+        
+        .payment-tab-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 5px;
+            color: #2196F3;
+            font-size: 20px;
+        }
+        
+        .payment-tab-content {
+            padding: 20px 15px;
+        }
+    </style>
+    <link rel="stylesheet" href="css/camera-modal.css">`n</head>
+<body>
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header" style="padding-bottom: 10px;">
+            <div class="header-top">
+                <button class="back-button" onclick="history.back()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 class="title" style="font-size: 20px;">Product Details</h1>
+                <div class="time-spent">
+                    <i class="fas fa-clock"></i>
+                    <span id="time-spent-display">00:00:00</span>
+                </div>
+                <div class="notification">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-dot"></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="product-detail" id="product-detail-container">
+                <!-- Product details will be loaded dynamically -->
+            </div>
+            
+            <!-- Promotional Information Section -->
+            <div class="promotional-info">
+                <div class="promo-item">
+                    <div class="promo-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <div class="promo-text">
+                        <div class="promo-title">
+                            <span class="promo-free">FREE Delivery</span>
+                            <span>• Delivery by 8 May, Thursday</span>
+                        </div>
+                        <div>If ordered within <span class="promo-countdown" id="delivery-countdown">29m 56s</span></div>
+                    </div>
+                    <div class="promo-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+                <div class="promo-item">
+                    <div class="promo-icon">
+                        <i class="fas fa-undo"></i>
+                    </div>
+                    <div class="promo-text">
+                        <div>10 days return policy</div>
+                    </div>
+                    <div class="promo-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+                <div class="promo-item">
+                    <div class="promo-icon">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                    <div class="promo-text">
+                        <div>Cash on Delivery Available</div>
+                    </div>
+                    <div class="promo-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Special Pricing Promotion -->
+            <div class="wow-deal">
+                <div class="wow-label">
+                    <div>WOW!</div>
+                    <div>DEAL</div>
+                </div>
+                <div class="wow-price">Get at ₹207</div>
+                <div class="wow-details">With Basket offer & more <i class="fas fa-chevron-down" style="color: #4caf50;"></i></div>
+            </div>
+            
+            <!-- All Offers Section -->
+            <div class="promo-item">
+                <div class="promo-text">
+                    <div>All Offers & Coupons</div>
+                </div>
+                <div class="promo-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            
+            <h2 class="section-title" style="padding-left: 15px;">Similar Products</h2>
+            <div class="similar-products" id="similar-products-container">
+                <!-- Similar products will be loaded dynamically -->
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="orders.html" class="nav-item">
+                <i class="fas fa-clipboard-list"></i>
+                <span>My Orders</span>
+            </a>
+            <a href="cart.html" class="nav-item">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Cart</span>
+            </a>
+            <a href="#" class="nav-item" id="profile-icon">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="profile-modal hidden" id="profile-modal">
+        <div class="profile-modal-content">
+            <!-- Auth Section (Initial View) -->
+            <div id="auth-section" class="profile-section">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Welcome</h2>
+                    </div>
+                    <span class="close-profile">&times;</span>
+                </div>
+                <div class="auth-buttons-container">
+                    <div class="auth-button-wrapper">
+                        <button id="register-btn" class="profile-btn register-btn">Register</button>
+                        <p class="auth-subtext">(New to OVRIN?)</p>
+                    </div>
+                    <div class="auth-button-wrapper">
+                        <button id="login-btn" class="profile-btn login-btn">Login</button>
+                        <p class="auth-subtext">Existing users</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Registration Form -->
+            <div id="register-section" class="profile-section hidden">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Create Account</h2>
+                    </div>
+                    <span class="back-to-auth">&larr;</span>
+                    <span class="close-profile">&times;</span>
+                </div>
+                <form id="register-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="register-name">Full Name</label>
+                        <input type="text" id="register-name" class="form-control" placeholder="John Smith" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email Address</label>
+                        <input type="email" id="register-email" class="form-control" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Password</label>
+                        <input type="password" id="register-password" class="form-control" placeholder="Minimum 6 characters" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm Password</label>
+                        <input type="password" id="confirm-password" class="form-control" placeholder="Re-enter your password" required>
+                    </div>
+                    <button type="submit" class="profile-btn submit-btn">Create Account</button>
+                    <div class="form-footer">
+                        <p class="terms">By signing up, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a></p>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="login-section" class="profile-section hidden">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Login</h2>
+                    </div>
+                    <span class="back-to-auth">&larr;</span>
+                    <span class="close-profile">&times;</span>
+                </div>
+                <form id="login-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" class="form-control" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" class="form-control" placeholder="********" required>
+                    </div>
+                    <button type="submit" class="profile-btn submit-btn">Login</button>
+                    <div class="form-footer">
+                        <a href="#" class="forgot-password">Forgot Password?</a>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- User Profile Section (After Login) -->
+            <div id="user-profile-section" class="profile-section hidden">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Profile</h2>
+                    </div>
+                    <span class="settings-icon"><i class="fas fa-cog"></i></span>
+                    <span class="close-profile">&times;</span>
+                </div>
+                
+                <!-- User Info Card -->
+                <div class="user-info-card">
+                    <div class="profile-avatar" id="profile-avatar-container">
+                        <img id="profile-image" src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Profile Photo">
+                        <div class="avatar-overlay">
+                            <i class="fas fa-camera"></i>
+                            <span>Change Photo</span>
+                        </div>
+                        <input type="file" id="profile-image-input" accept="image/*" capture="user" class="hidden">
+                    </div>
+                    <h3 id="profile-name" class="user-name">John Doe</h3>
+                    <p id="profile-bio" class="user-bio">Happy Shopper | Member since 2025</p>
+                    <button id="edit-profile-btn" class="profile-btn">Edit Profile</button>
+                </div>
+                
+                <!-- Account Overview Menu -->
+                <div class="account-menu">
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <span class="menu-item-text">My Orders</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <span class="menu-item-text">Wishlist</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <span class="menu-item-text">Payment Methods</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <span class="menu-item-text">Addresses</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-tag"></i>
+                            </div>
+                            <span class="menu-item-text">Coupons & Rewards</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-question-circle"></i>
+                            </div>
+                            <span class="menu-item-text">Support & Help Center</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Section -->
+                <div class="settings-section">
+                    <h3 class="section-title">Settings</h3>
+                    
+                    <div class="setting-item">
+                        <div class="setting-name">Dark Mode</div>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="dark-mode-toggle">
+                            <label for="dark-mode-toggle"></label>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-name">Notifications</div>
+                        <div class="setting-action">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-name">Privacy & Security</div>
+                        <div class="setting-action">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <button id="logout-btn" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Edit Profile Section -->
+            <div id="edit-profile-section" class="profile-section hidden">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Edit Profile</h2>
+                    </div>
+                    <span class="back-to-profile">&larr;</span>
+                    <span class="close-profile">&times;</span>
+                </div>
+                <form id="edit-profile-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="edit-name">Full Name</label>
+                        <input type="text" id="edit-name" class="form-control" placeholder="Your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-email">Email Address</label>
+                        <input type="email" id="edit-email" class="form-control" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-bio">Bio</label>
+                        <textarea id="edit-bio" class="form-control" placeholder="Tell us about yourself" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-avatar">Profile Picture URL</label>
+                        <input type="url" id="edit-avatar" class="form-control" placeholder="https://example.com/your-image.jpg">
+                    </div>
+                    <button type="submit" class="profile-btn submit-btn">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delivery Modal -->
+    <div class="delivery-modal" id="delivery-modal">
+        <div class="delivery-modal-content">
+            <div class="delivery-header">
+                <div class="delivery-close" id="delivery-close">×</div>
+                <div class="delivery-title">Delivery & Installation details</div>
+            </div>
+            <div class="delivery-body">
+                <div class="delivery-section">
+                    <div class="delivery-info">Usually delivered in</div>
+                    <div class="delivery-days">7 days</div>
+                    <div class="delivery-note">Enter pincode for exact delivery dates/charges</div>
+                </div>
+                
+                <div class="delivery-section">
+                    <div class="delivery-section-title">Installation Details</div>
+                    <div class="delivery-info">This product doesn't require installation</div>
+                </div>
+                
+                <div class="delivery-section">
+                    <div class="delivery-section-title">Shipping Policy of OVRIN</div>
+                    <div class="delivery-info">Delivery charges if applicable will be shown on the product page and cart.</div>
+                    <br>
+                    <div class="delivery-info">In case your order is not delivered even after the delivery confirmation email/SMS is shared with you, please contact us within 7 days to report this issue. Issue reported after 7 days of delivery confirmation email/SMS being sent will be automatically rejected.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Return Policy Modal -->
+    <div class="return-modal" id="return-modal">
+        <div class="return-modal-content">
+            <div class="return-header">
+                <div class="return-close" id="return-close">×</div>
+                <div class="return-title">Easy Returns Policy</div>
+            </div>
+            <div class="return-body">
+                <div class="return-options">
+                    <div class="return-option">
+                        <div class="return-option-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <div>Replacement</div>
+                    </div>
+                    <div class="return-option">
+                        <div class="return-option-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div>Refund</div>
+                    </div>
+                    <div class="return-option">
+                        <div class="return-option-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div>Exchange</div>
+                    </div>
+                </div>
+                
+                <div class="return-section">
+                    <div class="return-section-title">What are the conditions for return?</div>
+                    <div class="return-condition">
+                        <span class="return-check"><i class="fas fa-check"></i></span>
+                        <div>Received damaged product</div>
+                    </div>
+                    <div class="return-condition">
+                        <span class="return-check"><i class="fas fa-check"></i></span>
+                        <div>Received defective product</div>
+                    </div>
+                    <div class="return-condition">
+                        <span class="return-check"><i class="fas fa-check"></i></span>
+                        <div>Received wrong product</div>
+                    </div>
+                    <div class="return-condition">
+                        <span class="return-check"><i class="fas fa-check"></i></span>
+                        <div>Did not like the product</div>
+                    </div>
+                </div>
+                
+                <div class="return-section">
+                    <div class="return-section-title">How to place a return?</div>
+                    <div class="return-step">
+                        <div class="return-step-number">1</div>
+                        <div class="return-step-content">
+                            <div class="return-step-title">Select issue</div>
+                            <div class="return-step-detail">Go to My Orders > Order Details</div>
+                            <div class="return-step-detail">Return > Select Issue</div>
+                        </div>
+                    </div>
+                    <div class="return-step">
+                        <div class="return-step-number">2</div>
+                        <div class="return-step-content">
+                            <div class="return-step-title">Get an approval</div>
+                            <div class="return-step-detail">Seller will approve based on condition</div>
+                        </div>
+                    </div>
+                    <div class="return-step">
+                        <div class="return-step-number">3</div>
+                        <div class="return-step-content">
+                            <div class="return-step-title">Product will be picked up</div>
+                            <div class="return-step-detail">Product must be in original condition with tags and packaging</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="return-note">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>The product must be in original condition.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Payment Options Modal -->
+    <div class="payment-modal" id="payment-modal">
+        <div class="payment-modal-content">
+            <div class="payment-header">
+                <div class="payment-close" id="payment-close">×</div>
+                <div class="payment-title">Payments Options</div>
+            </div>
+            <div class="payment-body">
+                <div class="payment-tabs">
+                    <div class="payment-tab active" id="cod-tab">
+                        <div class="payment-tab-icon">
+                            <i class="fas fa-rupee-sign"></i>
+                        </div>
+                        <div>COD</div>
+                    </div>
+                    <div class="payment-tab" id="upi-tab">
+                        <div class="payment-tab-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div>UPI</div>
+                    </div>
+                </div>
+                <div class="payment-tab-content" id="cod-content">
+                    <p>Available. Select Cash on Delivery (CoD) payment option while placing the order and later, pay in cash at the time of actual delivery of product. No advance payment needed.</p>
+                </div>
+                <div class="payment-tab-content" id="upi-content" style="display: none;">
+                    <p>Pay instantly using UPI apps like Google Pay, PhonePe, or any other UPI-enabled app. Quick, secure, and convenient!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Quantity functions
+        function incrementQuantity() {
+            const input = document.getElementById('quantity-input');
+            input.value = parseInt(input.value) + 1;
+        }
+        
+        function decrementQuantity() {
+            const input = document.getElementById('quantity-input');
+            if (parseInt(input.value) > 1) {
+                input.value = parseInt(input.value) - 1;
+            }
+        }
+        
+        // Add to cart from detail page
+        function addToCartFromDetail(productId) {
+            // Check if user is logged in
+            const userData = localStorage.getItem('userData');
+            
+            if (!userData) {
+                // User is not logged in, show profile modal with auth section
+                openProfileModal();
+                showNotification('Please log in to add items to your cart');
+                return;
+            }
+            
+            // User is logged in, proceed with adding to cart
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const product = products.find(p => String(p.id) === String(productId));
+            
+            if (!product) {
+                console.error('Product not found:', productId);
+                showNotification('Sorry, product not found.');
+                return;
+            }
+            
+            // Get quantity
+            const quantity = parseInt(document.getElementById('quantity-input').value);
+            
+            // Get existing cart or initialize empty cart
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            
+            // Check if product already in cart
+            const existingProductIndex = cart.findIndex(item => String(item.id) === String(productId));
+            
+            if (existingProductIndex >= 0) {
+                // Add to quantity if already in cart
+                cart[existingProductIndex].quantity += quantity;
+                console.log('Updated existing product quantity in cart');
+            } else {
+                // Add new product to cart with selected quantity
+                cart.push({
+                    ...product,
+                    quantity: quantity
+                });
+                console.log('Added new product to cart');
+            }
+            
+            // Save updated cart
+            localStorage.setItem('cart', JSON.stringify(cart));
+            
+            // Update cart count in UI
+            updateCartCount();
+            
+            // Show added to cart notification
+            showNotification('Product added to cart!');
+        }
+        
+        // Buy Now functionality
+        function buyNowFromDetail(productId) {
+            // Check if user is logged in
+            const userData = localStorage.getItem('userData');
+            
+            if (!userData) {
+                // User is not logged in, show profile modal with auth section
+                openProfileModal();
+                showNotification('Please log in to complete your purchase');
+                return;
+            }
+            
+            // User is logged in, proceed with purchase
+            // First add to cart
+            addToCartFromDetail(productId);
+            
+            // Then redirect to checkout page
+            setTimeout(() => {
+                window.location.href = 'cart.html?checkout=true';
+            }, 500);
+            
+            // Show notification
+            showNotification('Redirecting to checkout...');
+        }
+        
+        // Function to open profile modal
+        function openProfileModal() {
+            const profileModal = document.getElementById('profile-modal');
+            const authSection = document.getElementById('auth-section');
+            const userProfileSection = document.getElementById('user-profile-section');
+            
+            // Get current user data
+            const userData = localStorage.getItem('userData');
+            
+            // Display appropriate section based on login status
+            if (userData) {
+                // Show user profile if logged in
+                authSection.classList.add('hidden');
+                userProfileSection.classList.remove('hidden');
+            } else {
+                // Show auth section if not logged in
+                authSection.classList.remove('hidden');
+                userProfileSection.classList.add('hidden');
+            }
+            
+            // Show the modal
+            profileModal.classList.remove('hidden');
+        }
+        
+        // Function to show notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification-popup';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Function to update cart count
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const count = cart.reduce((total, item) => total + item.quantity, 0);
+            
+            // Update cart count display if element exists
+            const cartCountElement = document.querySelector('.cart-count');
+            if (cartCountElement) {
+                cartCountElement.textContent = count;
+                cartCountElement.style.display = count > 0 ? 'block' : 'none';
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Product detail page loaded');
+            
+            // Initialize product data
+            ensureProductsData();
+            
+            // Extract product ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id'); // Don't parseInt since IDs can be strings
+            console.log('Product ID from URL:', productId);
+            
+            // Get all products
+            const allProducts = JSON.parse(localStorage.getItem('products'));
+            
+            // Try to get the product by ID from the URL parameter
+            let selectedProduct = null;
+            const urlCategory = urlParams.get('category');
+            
+            console.log('Looking for product with ID:', productId, 'and category:', urlCategory);
+            
+            if (productId) {
+                // First check if we have a product-specific entry in localStorage
+                const productKey = 'selectedProduct_' + String(productId);
+                const storedProduct = localStorage.getItem(productKey);
+                
+                if (storedProduct) {
+                    selectedProduct = JSON.parse(storedProduct);
+                    console.log('Found product in localStorage with specific key:', selectedProduct);
+                } else {
+                    // Then try to find it in the main products array
+                    selectedProduct = allProducts.find(p => String(p.id) === String(productId));
+                    console.log('Found product by ID in main products array:', selectedProduct);
+                }
+            }
+            
+            // If still no product, try the last selected product ID
+            if (!selectedProduct) {
+                const lastProductId = localStorage.getItem('lastSelectedProductId');
+                if (lastProductId) {
+                    const lastProductKey = 'selectedProduct_' + lastProductId;
+                    const lastProduct = localStorage.getItem(lastProductKey);
+                    if (lastProduct) {
+                        selectedProduct = JSON.parse(lastProduct);
+                        console.log('Using last selected product:', selectedProduct);
+                    }
+                }
+            }
+            
+            // If still no product, use the first product as default
+            if (!selectedProduct && allProducts && allProducts.length > 0) {
+                // If we have a category, try to find a product from that category
+                if (urlCategory) {
+                    const categoryProduct = allProducts.find(p => p.category === urlCategory);
+                    if (categoryProduct) {
+                        selectedProduct = categoryProduct;
+                        console.log('Using first product from category:', selectedProduct);
+                    }
+                }
+                
+                // If still nothing, use the first product
+                if (!selectedProduct) {
+                    selectedProduct = allProducts[0];
+                    console.log('Using first product as default:', selectedProduct);
+                }
+            }
+            
+            // Last resort fallback
+            if (!selectedProduct) {
+                console.log('No product found, using hardcoded default');
+                selectedProduct = {
+                    id: 1,
+                    name: 'Wireless Headphones',
+                    price: 99.99,
+                    rating: 4.5,
+                    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                    category: 'Electronics',
+                    status: 'Available'
+                };
+            }
+            
+            // Display product details
+            const productDetailContainer = document.getElementById('product-detail-container');
+            const ratingStars = generateRatingStars(selectedProduct.rating);
+            
+            // Create array of product images (original + 4 variations)
+            const productImages = [
+                selectedProduct.image,
+                selectedProduct.image.replace('w=500', 'w=501'), // Different cropping
+                selectedProduct.image.replace('w=500', 'w=502'), // Different angle
+                selectedProduct.image.replace('w=500', 'w=503'), // Different color variation
+                selectedProduct.image.replace('w=500', 'w=504')  // Close-up detail
+            ];
+            
+            // Build image slider HTML
+            productDetailContainer.innerHTML = `
+                <div class="product-image-slider">
+                    <div class="main-image-container">
+                        ${productImages.map((img, index) => 
+                            `<img src="${img}" alt="${selectedProduct.name} - View ${index+1}" 
+                                class="product-detail-image ${index === 0 ? 'active' : ''}" 
+                                data-index="${index}">`
+                        ).join('')}
+                        <button class="slider-nav slider-prev"><i class="fas fa-chevron-left"></i></button>
+                        <button class="slider-nav slider-next"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <div class="thumbnail-container">
+                        ${productImages.map((img, index) => 
+                            `<img src="${img}" alt="Thumbnail ${index+1}" 
+                                class="image-thumbnail ${index === 0 ? 'active' : ''}" 
+                                data-index="${index}">`
+                        ).join('')}
+                    </div>
+                    <button class="viewer-360-toggle" id="viewer-360-toggle">
+                        <i class="fas fa-sync-alt"></i> View 360° Image
+                    </button>
+                    <div id="viewer-360-container" class="viewer-360-container" style="display: none;"></div>
+                </div>
+                <div class="recent-orders-info" style="padding: 10px; margin-bottom: 10px; background-color: rgba(76, 175, 80, 0.1); border-radius: 8px; border-left: 3px solid #e91e63;">
+                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                        <i class="fas fa-users" style="color: #9c27b0; margin-right: 8px;"></i>
+                        <span style="font-weight: 600; color: #4caf50;">${getRandomOrderCount(7)} people ordered this in the last 7 days</span>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-chart-line" style="color: #9c27b0; margin-right: 8px;"></i>
+                        <span style="font-weight: 600; color: #4caf50;">${getRandomOrderCount(30)} people ordered this in the last 30 days</span>
+                    </div>
+                </div>
+                <div class="product-detail-info">
+                    <h1 style="color: #9c27b0; font-weight: 700; font-size: 15px;">${selectedProduct.name}</h1>
+                    <div class="product-detail-rating">
+                        ${ratingStars}
+                        <span class="rating-count">(${Math.floor(Math.random() * 500) + 100} reviews)</span>
+                    </div>
+                    <p class="product-detail-price">₹${selectedProduct.price.toFixed(2)}</p>
+                    <p class="product-description">
+                        Experience the ultimate ${selectedProduct.name.toLowerCase()} designed with premium materials 
+                        and cutting-edge technology. This product offers exceptional performance and reliability 
+                        for all your needs.
+                    </p>
+                    <div class="product-actions">
+                        <div class="quantity-selector">
+                            <button class="quantity-btn" onclick="decrementQuantity()">-</button>
+                            <input type="text" value="1" class="quantity-input" id="quantity-input" readonly>
+                            <button class="quantity-btn" onclick="incrementQuantity()">+</button>
+                        </div>
+                        <button class="add-to-cart-btn" onclick="addToCartFromDetail(${selectedProduct.id})">
+                            Add to Cart
+                        </button>
+                        <button class="buy-now-btn" onclick="buyNowFromDetail(${selectedProduct.id})">
+                            Buy Now
+                        </button>
+                    </div>
+                    
+                    <!-- Product Highlights Section (Flipkart-style) -->
+                    <div class="product-highlights" style="margin: 15px 0; border-left: 3px solid #e91e63; padding-left: 15px;">
+                        <h3 style="color: #9c27b0; font-size: 16px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center;">
+                            <i class="fas fa-star" style="margin-right: 8px; color: #9c27b0;"></i> Product Highlights
+                        </h3>
+                        <ul style="list-style-type: none; margin: 0; padding: 0;">
+                            ${getProductHighlights(selectedProduct).map(highlight => 
+                                `<li style="margin-bottom: 8px; display: flex; align-items: flex-start;">
+                                    <i class="fas fa-check-circle" style="color: #4caf50; margin-right: 8px; margin-top: 2px;"></i>
+                                    <span style="color: #4caf50; font-weight: 600;">${highlight}</span>
+                                </li>`
+                            ).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            // Load similar products
+            loadSimilarProducts(selectedProduct.category, selectedProduct.id);
+            
+            // Update cart count
+            updateCartCount();
+            
+            // Initialize image slider
+            initializeImageSlider();
+            
+            // Initialize delivery modal
+            const deliveryPromo = document.querySelector('.promo-item:first-child');
+            const deliveryModal = document.getElementById('delivery-modal');
+            const closeBtn = document.getElementById('delivery-close');
+            
+            // Add click event to the delivery promo
+            if (deliveryPromo) {
+                deliveryPromo.addEventListener('click', function() {
+                    deliveryModal.classList.add('active');
+                });
+            }
+            
+            // Add click event to close button
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function() {
+                    deliveryModal.classList.remove('active');
+                });
+            }
+            
+            // Close modal when clicking outside the content
+            deliveryModal.addEventListener('click', function(event) {
+                if (event.target === deliveryModal) {
+                    deliveryModal.classList.remove('active');
+                }
+            });
+            
+            // Get the return policy promo item and modal
+            const returnPromo = document.querySelector('.promo-item:nth-child(2)');
+            const returnModal = document.getElementById('return-modal');
+            const returnCloseBtn = document.getElementById('return-close');
+            
+            // Add click event to the return policy promo
+            if (returnPromo) {
+                returnPromo.addEventListener('click', function() {
+                    returnModal.classList.add('active');
+                });
+            }
+            
+            // Add click event to close button
+            if (returnCloseBtn) {
+                returnCloseBtn.addEventListener('click', function() {
+                    returnModal.classList.remove('active');
+                });
+            }
+            
+            // Close modal when clicking outside the content
+            returnModal.addEventListener('click', function(event) {
+                if (event.target === returnModal) {
+                    returnModal.classList.remove('active');
+                }
+            });
+            
+            // Get the payment options promo item and modal
+            const paymentPromo = document.querySelector('.promo-item:nth-child(3)');
+            const paymentModal = document.getElementById('payment-modal');
+            const paymentCloseBtn = document.getElementById('payment-close');
+            const codTab = document.getElementById('cod-tab');
+            const upiTab = document.getElementById('upi-tab');
+            const codContent = document.getElementById('cod-content');
+            const upiContent = document.getElementById('upi-content');
+            
+            // Add click event to the payment options promo
+            if (paymentPromo) {
+                paymentPromo.addEventListener('click', function() {
+                    paymentModal.classList.add('active');
+                });
+            }
+            
+            // Add click event to close button
+            if (paymentCloseBtn) {
+                paymentCloseBtn.addEventListener('click', function() {
+                    paymentModal.classList.remove('active');
+                });
+            }
+            
+            // Add tab switching functionality
+            if (codTab && upiTab) {
+                codTab.addEventListener('click', function() {
+                    codTab.classList.add('active');
+                    upiTab.classList.remove('active');
+                    codContent.style.display = 'block';
+                    upiContent.style.display = 'none';
+                });
+                
+                upiTab.addEventListener('click', function() {
+                    upiTab.classList.add('active');
+                    codTab.classList.remove('active');
+                    upiContent.style.display = 'block';
+                    codContent.style.display = 'none';
+                });
+            }
+            
+            // Close modal when clicking outside the content
+            paymentModal.addEventListener('click', function(event) {
+                if (event.target === paymentModal) {
+                    paymentModal.classList.remove('active');
+                }
+            });
+            
+            // Generate star rating HTML
+            function generateRatingStars(rating) {
+                let starsHTML = '';
+                const fullStars = Math.floor(rating);
+                const hasHalfStar = rating % 1 >= 0.5;
+                
+                // Add full stars
+                for (let i = 0; i < fullStars; i++) {
+                    starsHTML += '<i class="fas fa-star"></i>';
+                }
+                
+                // Add half star if needed
+                if (hasHalfStar) {
+                    starsHTML += '<i class="fas fa-star-half-alt"></i>';
+                }
+                
+                // Add empty stars to make 5 total
+                const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+                for (let i = 0; i < emptyStars; i++) {
+                    starsHTML += '<i class="far fa-star"></i>';
+                }
+                
+                return starsHTML;
+            }
+            
+            // Make sure we have all products data available
+            function ensureProductsData() {
+                // Check if products exist in localStorage
+                let products = JSON.parse(localStorage.getItem('products'));
+                if (!products || products.length === 0) {
+                    // If not, use these default products
+                    products = [
+                        {
+                            id: 1,
+                            name: 'Wireless Headphones',
+                            price: 99.99,
+                            rating: 4.5,
+                            image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                            category: 'Electronics',
+                            status: 'Available'
+                        },
+                        {
+                            id: 2,
+                            name: 'Smart Watch',
+                            price: 149.99,
+                            rating: 4.8,
+                            image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                            category: 'Electronics',
+                            status: 'Available'
+                        },
+                        {
+                            id: 3,
+                            name: 'Moisturizing Face Cream',
+                            price: 24.99,
+                            rating: 4.2,
+                            image: 'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                            category: 'Beauty',
+                            status: 'Available'
+                        },
+                        {
+                            id: 4,
+                            name: 'Denim Jacket',
+                            price: 59.99,
+                            rating: 4.7,
+                            image: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                            category: 'Fashion',
+                            status: 'Available'
+                        },
+                        {
+                            id: 5,
+                            name: 'Wireless Earbuds',
+                            price: 79.99,
+                            rating: 4.6,
+                            image: 'https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                            category: 'Electronics',
+                            status: 'Available'
+                        },
+                        {
+                            id: 6,
+                            name: 'Remote Control Car',
+                            price: 34.99,
+                            rating: 4.3,
+                            image: 'https://images.unsplash.com/photo-1594787318286-3d835c1d207f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                            category: 'Toys',
+                            status: 'Available'
+                        }
+                    ];
+                    localStorage.setItem('products', JSON.stringify(products));
+                }
+                return products;
+            }
+            
+            // Load similar products
+            function loadSimilarProducts(category, currentProductId) {
+                const products = ensureProductsData();
+                const similarProducts = products.filter(product => 
+                    product.category === category && product.id !== currentProductId
+                );
+                
+                const container = document.getElementById('similar-products-container');
+                if (!container) return;
+                
+                // Clear any existing content
+                container.innerHTML = '';
+                
+                similarProducts.forEach(product => {
+                    const card = document.createElement('div');
+                    card.className = 'similar-product-card';
+                    
+                    // Calculate discounted price (random discount between 5% and 20%)
+                    const discountPercent = Math.floor(Math.random() * 16) + 5;
+                    const originalPrice = product.price;
+                    const discountedPrice = originalPrice * (1 - discountPercent/100);
+                    
+                    // Generate random rating between 3.5 and 5.0
+                    const rating = (Math.random() * 1.5 + 3.5).toFixed(1);
+                    const ratingCount = Math.floor(Math.random() * 500) + 50;
+                    
+                    // Generate star rating display
+                    const fullStars = Math.floor(rating);
+                    const hasHalfStar = rating % 1 >= 0.5;
+                    let starsHTML = '';
+                    
+                    for (let i = 0; i < fullStars; i++) {
+                        starsHTML += '<i class="fas fa-star"></i>';
+                    }
+                    
+                    if (hasHalfStar) {
+                        starsHTML += '<i class="fas fa-star-half-alt"></i>';
+                    }
+                    
+                    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+                    for (let i = 0; i < emptyStars; i++) {
+                        starsHTML += '<i class="far fa-star"></i>';
+                    }
+                    
+                    card.innerHTML = `
+                        <img src="${product.image}" alt="${product.name}" class="similar-product-img">
+                        <div class="similar-product-info">
+                            <div>
+                                <h3 class="similar-product-name">${product.name}</h3>
+                                <div class="similar-product-rating">
+                                    <div class="rating-stars">${starsHTML}</div>
+                                    <div class="rating-count">(${ratingCount})</div>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="similar-product-price">₹${discountedPrice.toFixed(2)}</p>
+                                <p class="similar-product-discount">₹${originalPrice.toFixed(2)} | ${discountPercent}% off</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    card.addEventListener('click', () => {
+                        // Clear any previous selection
+                        localStorage.removeItem('selectedProduct');
+                        // Set the new product data
+                        localStorage.setItem('selectedProduct', JSON.stringify(product));
+                        // Navigate to the product page with query parameter
+                        window.location.href = 'product.html?id=' + product.id + '&t=' + Date.now();
+                    });
+                    
+                    container.appendChild(card);
+                });
+            }
+            
+            // Initialize countdown timer for free delivery
+            function initCountdownTimer() {
+                // Starting time in seconds (29 minutes and 56 seconds = 1796 seconds)
+                let totalSeconds = 29 * 60 + 56;
+                const countdownElement = document.getElementById('delivery-countdown');
+                
+                if (!countdownElement) return;
+                
+                // Update the countdown every second
+                const countdownInterval = setInterval(function() {
+                    // Decrease time by 1 second
+                    totalSeconds--;
+                    
+                    // Calculate minutes and seconds
+                    const minutes = Math.floor(totalSeconds / 60);
+                    const seconds = totalSeconds % 60;
+                    
+                    // Format display with leading zeros if needed
+                    const displayMinutes = minutes;
+                    const displaySeconds = seconds < 10 ? '0' + seconds : seconds;
+                    
+                    // Update display
+                    countdownElement.textContent = displayMinutes + 'm ' + displaySeconds + 's';
+                    
+                    // If countdown is finished
+                    if (totalSeconds <= 0) {
+                        clearInterval(countdownInterval);
+                        countdownElement.textContent = 'Offer expired';
+                        countdownElement.style.color = '#f44336';
+                    }
+                }, 1000);
+            }
+            
+            // Start the countdown timer
+            initCountdownTimer();
+            
+            // Generate a random number of orders based on product popularity
+        function getRandomOrderCount(days) {
+            // Base count depends on the number of days
+            const baseCount = days === 7 ? 15 : 45;
+            // Variance to make it look more realistic
+            const variance = days === 7 ? 10 : 25;
+            
+            return Math.floor(Math.random() * variance) + baseCount;
+        }
+        
+        // Generate product highlights based on product category and features
+        function getProductHighlights(product) {
+            // Base highlights that apply to all products
+            let highlights = [
+                'Premium quality materials',
+                '1 Year manufacturer warranty'
+            ];
+            
+            // Category-specific highlights
+            if (product.category) {
+                switch(product.category.toLowerCase()) {
+                    case 'electronics':
+                        highlights = highlights.concat([
+                            'Advanced technology for superior performance',
+                            'Energy-efficient design',
+                            'Smart connectivity features'
+                        ]);
+                        break;
+                    case 'fashion':
+                        highlights = highlights.concat([
+                            'Premium fabric quality',
+                            'Stylish and trendy design',
+                            'Comfortable fit'
+                        ]);
+                        break;
+                    case 'beauty':
+                        highlights = highlights.concat([
+                            'Dermatologically tested',
+                            'No harmful chemicals',
+                            'Suitable for all skin types'
+                        ]);
+                        break;
+                    case 'home':
+                        highlights = highlights.concat([
+                            'Elegant design for modern homes',
+                            'Space-saving functionality',
+                            'Easy to clean and maintain'
+                        ]);
+                        break;
+                    case 'toys':
+                        highlights = highlights.concat([
+                            'Safe for children',
+                            'Educational and fun',
+                            'Durable construction'
+                        ]);
+                        break;
+                    case 'books':
+                        highlights = highlights.concat([
+                            'Bestseller in its category',
+                            'High-quality print and binding',
+                            'Available in multiple formats'
+                        ]);
+                        break;
+                    case 'grocery':
+                        highlights = highlights.concat([
+                            'Fresh and high-quality',
+                            'Sourced from trusted suppliers',
+                            'Packed with essential nutrients'
+                        ]);
+                        break;
+                    case 'sports':
+                        highlights = highlights.concat([
+                            'Professional-grade quality',
+                            'Engineered for maximum performance',
+                            'Durable and long-lasting'
+                        ]);
+                        break;
+                    case 'health':
+                        highlights = highlights.concat([
+                            'Clinically proven results',
+                            'Made with natural ingredients',
+                            'No side effects'
+                        ]);
+                        break;
+                    case 'games':
+                        highlights = highlights.concat([
+                            'Immersive gameplay experience',
+                            'High-definition graphics',
+                            'Multi-player compatibility'
+                        ]);
+                        break;
+                    default:
+                        highlights = highlights.concat([
+                            'Top-rated product in its category',
+                            'Designed for everyday use',
+                            'Excellent value for money'
+                        ]);
+                }
+            }
+            
+            // Product name-specific highlights
+            const productName = product.name.toLowerCase();
+            if (productName.includes('wireless') || productName.includes('bluetooth')) {
+                highlights.push('Wireless technology for hassle-free use');
+            }
+            if (productName.includes('premium') || productName.includes('pro')) {
+                highlights.push('Premium model with additional features');
+            }
+            if (productName.includes('waterproof') || productName.includes('water resistant')) {
+                highlights.push('Water resistant for durability');
+            }
+            
+            // Return randomly selected 4-5 highlights
+            const shuffled = highlights.sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, Math.floor(Math.random() * 2) + 4); // Return 4-5 highlights
+        }
+        
+        // Load product highlights
+        function loadProductHighlights(product) {
+            const highlights = getProductHighlights(product);
+            const container = document.getElementById('product-highlights');
+            if (!container) return;
+            
+            // Clear any existing content
+            container.innerHTML = '';
+            
+            // Create a heading
+            const heading = document.createElement('h2');
+            heading.textContent = 'Why Buy This Product?';
+            container.appendChild(heading);
+            
+            // Create a list of highlights
+            const list = document.createElement('ul');
+            highlights.forEach(highlight => {
+                const item = document.createElement('li');
+                item.textContent = highlight;
+                list.appendChild(item);
+            });
+            container.appendChild(list);
+        }
+            
+            // Initialize the product image slider
+            function initializeImageSlider() {
+                let currentSlide = 0;
+                const slides = document.querySelectorAll('.product-detail-image');
+                const thumbnails = document.querySelectorAll('.image-thumbnail');
+                const prevButton = document.querySelector('.slider-prev');
+                const nextButton = document.querySelector('.slider-next');
+                const totalSlides = slides.length;
+                
+                if (!slides.length || !thumbnails.length) return;
+                
+                // Function to show a specific slide
+                function showSlide(index) {
+                    // Hide all slides
+                    slides.forEach(slide => slide.classList.remove('active'));
+                    thumbnails.forEach(thumb => thumb.classList.remove('active'));
+                    
+                    // Show the selected slide
+                    slides[index].classList.add('active');
+                    thumbnails[index].classList.add('active');
+                    currentSlide = index;
+                }
+                
+                // Event listener for previous button
+                prevButton.addEventListener('click', () => {
+                    currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+                    showSlide(currentSlide);
+                });
+                
+                // Event listener for next button
+                nextButton.addEventListener('click', () => {
+                    currentSlide = (currentSlide + 1) % totalSlides;
+                    showSlide(currentSlide);
+                });
+                
+                // Event listeners for thumbnails
+                thumbnails.forEach((thumbnail, index) => {
+                    thumbnail.addEventListener('click', () => {
+                        showSlide(index);
+                    });
+                });
+                
+                // Initialize 360 Viewer functionality
+                initializeViewer360();
+            }
+            
+            // Initialize the 360-degree image viewer
+            function initializeViewer360() {
+                const viewer360Toggle = document.getElementById('viewer-360-toggle');
+                const viewer360Container = document.getElementById('viewer-360-container');
+                const mainImageContainer = document.querySelector('.main-image-container');
+                const thumbnailContainer = document.querySelector('.thumbnail-container');
+                let viewer360Instance = null;
+                let is360ViewActive = false;
+                
+                // Skip if elements don't exist
+                if (!viewer360Toggle || !viewer360Container) return;
+                
+                // Generate 360-degree view image URLs (typically these would come from a server)
+                // For demo, we'll create variations of the product image to simulate 360 views
+                function generate360Images(baseImage) {
+                    // Extract base part of the URL to create unique variations for the 360 view
+                    const imageUrlBase = baseImage.split('?')[0];
+                    const imageUrls = [];
+                    
+                    // Generate 24 frames for a smooth 360-degree rotation (15 degrees per frame)
+                    for (let i = 1; i <= 24; i++) {
+                        // In a real implementation, these would be actual different angle shots
+                        // For this demo, we're using URL parameters to simulate different images
+                        imageUrls.push(`${imageUrlBase}?angle=${i}&view=360&frame=${i}`);
+                    }
+                    
+                    return imageUrls;
+                }
+                
+                // Toggle between regular image view and 360-degree view
+                viewer360Toggle.addEventListener('click', () => {
+                    if (is360ViewActive) {
+                        // Switch back to regular image view
+                        mainImageContainer.style.display = 'block';
+                        thumbnailContainer.style.display = 'flex';
+                        viewer360Container.style.display = 'none';
+                        viewer360Toggle.innerHTML = '<i class="fas fa-sync-alt"></i> View 360° Image';
+                        
+                        // Destroy the 360 viewer instance to free up resources
+                        if (viewer360Instance) {
+                            viewer360Instance.destroy();
+                            viewer360Instance = null;
+                        }
+                    } else {
+                        // Switch to 360-degree view
+                        mainImageContainer.style.display = 'none';
+                        thumbnailContainer.style.display = 'none';
+                        viewer360Container.style.display = 'block';
+                        viewer360Toggle.innerHTML = '<i class="fas fa-images"></i> View Regular Images';
+                        
+                        // Get the first product image as the base for our 360 view
+                        const baseImage = document.querySelector('.product-detail-image').getAttribute('src');
+                        const imageUrls = generate360Images(baseImage);
+                        
+                        // Initialize the 360-degree viewer
+                        viewer360Instance = new ProductViewer360(viewer360Container, imageUrls, {
+                            autoRotate: true,
+                            autoRotateSpeed: 30, // slower rotation speed
+                            dragSensitivity: 3
+                        });
+                    }
+                    
+                    is360ViewActive = !is360ViewActive;
+                });
+            }
+        });
+    </script>
+    <script src="js/profile-modal.js"></script>
+    <script src="js/wishlist.js"></script>
+    <script src="js/360-viewer.js"></script>
+    <script src="js/time-tracker.js"></script>
+    <script src="js/orders-access.js"></script>`n    <script src="js/camera-modal.js"></script>
+    <script src="js/camera-access.js"></script>`n</body>
+</html>
+
+
+

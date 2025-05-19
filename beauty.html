@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beauty | OVRIN</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <link rel="stylesheet" href="css/header-enhanced.css">
+    <link rel="stylesheet" href="css/wishlist.css">
+    <link rel="stylesheet" href="css/category-themes.css">
+    <style>
+        .subcategory-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            padding: 15px;
+        }
+        
+        .subcategory-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background-color: white;
+            border-radius: 12px;
+            padding: 15px 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .subcategory-item:active {
+            transform: scale(0.95);
+        }
+        
+        .subcategory-icon {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        
+        .subcategory-icon i {
+            font-size: 12px;
+            color: #4caf50; /* Green color for icons */
+        }
+        
+        .subcategory-name {
+            font-size: 13px;
+            color: #212121;
+            font-weight: 600;
+        }
+        
+        .back-button {
+            background: transparent;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            color: white;
+            display: flex;
+            align-items: center;
+        }
+        
+        .category-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: white;
+        }
+    </style>
+    <link rel="stylesheet" href="css/camera-modal.css">
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="container beauty-theme">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="header-top">
+                <button class="back-button" onclick="history.back()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 class="category-title">Beauty</h1>
+                <div class="header-actions">
+                    <div class="wishlist-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="notification">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-dot"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search in Beauty">
+                <i class="fas fa-camera filter-icon"></i>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Subcategory Grid -->
+            <div class="subcategory-grid">
+                <div class="subcategory-item" onclick="navigateToSubcategory('skincare')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-spa"></i>
+                    </div>
+                    <div class="subcategory-name">Skin Care</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('makeup')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <div class="subcategory-name">Makeup</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('haircare')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-shower"></i>
+                    </div>
+                    <div class="subcategory-name">Hair Care</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('fragrances')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-air-freshener"></i>
+                    </div>
+                    <div class="subcategory-name">Fragrances</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('personalcare')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-tooth"></i>
+                    </div>
+                    <div class="subcategory-name">Personal Care</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('appliances')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-wind"></i>
+                    </div>
+                    <div class="subcategory-name">Appliances</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('men')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-male"></i>
+                    </div>
+                    <div class="subcategory-name">Men's Grooming</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('tools')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-cut"></i>
+                    </div>
+                    <div class="subcategory-name">Tools & Brushes</div>
+                </div>
+                <div class="subcategory-item" onclick="navigateToSubcategory('organic')">
+                    <div class="subcategory-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <div class="subcategory-name">Organic</div>
+                </div>
+            </div>
+            
+            <!-- Featured Beauty Section -->
+            <div class="section-header">
+                <h2 class="section-title">Featured Beauty Products</h2>
+                <a href="#" class="view-all">View All</a>
+            </div>
+            
+            <!-- Product Grid for Featured Beauty -->
+            <div class="product-grid" id="featured-beauty">
+                <!-- Products will be dynamically added here -->
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="orders.html" class="nav-item">
+                <i class="fas fa-clipboard-list"></i>
+                <span>My Orders</span>
+            </a>
+            <a href="cart.html" class="nav-item">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Cart</span>
+            </a>
+            <a href="#" class="nav-item" id="profile-nav">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Profile Modal -->    
+    <div id="profile-modal" class="profile-modal hidden">
+        <div class="profile-modal-content">
+            <!-- Initial State: Login/Register -->            
+            <div id="auth-section" class="profile-section">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Welcome to OVRIN</h2>
+                    </div>
+                    <span class="close-profile">&times;</span>
+                </div>
+                <div class="auth-buttons-container">
+                    <div class="auth-button-wrapper">
+                        <button id="register-btn" class="profile-btn register-btn">Register</button>
+                        <p class="auth-subtext">(New to OVRIN?)</p>
+                    </div>
+                    <div class="auth-button-wrapper">
+                        <button id="login-btn" class="profile-btn login-btn">Login</button>
+                        <p class="auth-subtext">Existing users</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Registration Form -->
+            <div id="register-section" class="profile-section hidden">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Create Account</h2>
+                    </div>
+                    <span class="back-to-auth">&larr;</span>
+                    <span class="close-profile">&times;</span>
+                </div>
+                <form id="register-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="register-name">Full Name</label>
+                        <input type="text" id="register-name" class="form-control" placeholder="John Smith" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email Address</label>
+                        <input type="email" id="register-email" class="form-control" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Password</label>
+                        <input type="password" id="register-password" class="form-control" placeholder="Minimum 6 characters" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm Password</label>
+                        <input type="password" id="confirm-password" class="form-control" placeholder="Re-enter your password" required>
+                    </div>
+                    <button type="submit" class="profile-btn submit-btn">Create Account</button>
+                    <div class="form-footer">
+                        <p class="terms">By signing up, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a></p>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="login-section" class="profile-section hidden">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Login</h2>
+                    </div>
+                    <span class="back-to-auth">&larr;</span>
+                    <span class="close-profile">&times;</span>
+                </div>
+                <form id="login-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" class="form-control" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" class="form-control" placeholder="********" required>
+                    </div>
+                    <button type="submit" class="profile-btn submit-btn">Login</button>
+                    <div class="form-footer">
+                        <a href="#" class="forgot-password">Forgot Password?</a>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- User Profile Section (After Login) -->
+            <div id="user-profile-section" class="profile-section hidden">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Profile</h2>
+                    </div>
+                    <span class="settings-icon"><i class="fas fa-cog"></i></span>
+                    <span class="close-profile">&times;</span>
+                </div>
+                
+                <!-- User Info Card -->
+                <div class="user-info-card">
+                    <div class="profile-avatar" id="profile-avatar-container">
+                        <img id="profile-image" src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Profile Photo">
+                        <div class="avatar-overlay">
+                            <i class="fas fa-camera"></i>
+                            <span>Change Photo</span>
+                        </div>
+                        <input type="file" id="profile-image-input" accept="image/*" capture="user" class="hidden">
+                    </div>
+                    <h3 id="profile-name" class="user-name">John Doe</h3>
+                    <p id="profile-bio" class="user-bio">Happy Shopper | Member since 2025</p>
+                    <button id="edit-profile-btn" class="profile-btn">Edit Profile</button>
+                </div>
+                
+                <!-- Account Overview Menu -->
+                <div class="account-menu">
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <span class="menu-item-text">My Orders</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <span class="menu-item-text">Wishlist</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <span class="menu-item-text">Payment Methods</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <span class="menu-item-text">Addresses</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-tag"></i>
+                            </div>
+                            <span class="menu-item-text">Coupons & Rewards</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-item-icon">
+                                <i class="fas fa-question-circle"></i>
+                            </div>
+                            <span class="menu-item-text">Support & Help Center</span>
+                        </div>
+                        <div class="menu-item-right">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Section -->
+                <div class="settings-section">
+                    <h3 class="section-title">Settings</h3>
+                    
+                    <div class="setting-item">
+                        <div class="setting-name">Dark Mode</div>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="dark-mode-toggle">
+                            <label for="dark-mode-toggle"></label>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-name">Notifications</div>
+                        <div class="setting-action">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-name">Privacy & Security</div>
+                        <div class="setting-action">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <button id="logout-btn" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Edit Profile Section -->
+            <div id="edit-profile-section" class="profile-section hidden">
+                <div class="profile-header">
+                    <div class="welcome-header">
+                        <h2>Edit Profile</h2>
+                    </div>
+                    <span class="back-to-profile">&larr;</span>
+                    <span class="close-profile">&times;</span>
+                </div>
+                <form id="edit-profile-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="edit-name">Full Name</label>
+                        <input type="text" id="edit-name" class="form-control" placeholder="Your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-email">Email Address</label>
+                        <input type="email" id="edit-email" class="form-control" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-bio">Bio</label>
+                        <textarea id="edit-bio" class="form-control" placeholder="Tell us about yourself" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-avatar">Profile Picture URL</label>
+                        <input type="url" id="edit-avatar" class="form-control" placeholder="https://example.com/your-image.jpg">
+                    </div>
+                    <button type="submit" class="profile-btn submit-btn">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/product.js"></script>
+    <script src="js/profile-modal.js"></script>
+    
+    <script>
+        // Function to navigate to subcategory
+        function navigateToSubcategory(subcategory) {
+            console.log(`Navigating to subcategory: ${subcategory}`);
+            // For now, just show an alert
+            alert(`Selected subcategory: ${subcategory}`);
+            // In a real implementation, you would navigate to a subcategory page
+            // window.location.href = `${subcategory}.html`;
+        }
+        
+        // Populate featured beauty products
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all beauty products
+            const productsData = JSON.parse(localStorage.getItem('products')) || [];
+            const beautyProducts = productsData.filter(product => product.category === 'Beauty');
+            
+            // Display the beauty products in the featured section
+            const featuredContainer = document.getElementById('featured-beauty');
+            if (featuredContainer && beautyProducts.length > 0) {
+                // If we have the product display function from product.js
+                if (typeof createProductCard === 'function') {
+                    beautyProducts.forEach(product => {
+                        const productCard = createProductCard(product);
+                        featuredContainer.appendChild(productCard);
+                    });
+                } else {
+                    // Fallback if createProductCard is not available
+                    featuredContainer.innerHTML = '<p>Beauty products coming soon!</p>';
+                }
+            }
+        });
+    </script>
+<script src="js/orders-access.js"></script>
+    <script src="js/camera-modal.js"></script>
+    <script src="js/camera-access.js"></script>
+</body>
+</html>
+
+
+
+
